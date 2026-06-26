@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillSphere AI — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink:     #0A0A12;
+    --deep:    #0F0F1E;
+    --panel:   #141428;
+    --card:    #1A1A32;
+    --border:  #252545;
+    --muted:   #4A4A72;
+    --text:    #C8C8E8;
+    --bright:  #E8E8FF;
+    --accent:  #7C5CFC;
+    --accent2: #00E5C3;
+    --warn:    #FF6B6B;
+    --gold:    #FFD166;
+    --glow:    rgba(124,92,252,0.25);
+    --glow2:   rgba(0,229,195,0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--ink);
+    color: var(--text);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+  }
+
+  /* ── LEFT PANEL ── */
+  .left-panel {
+    position: relative;
+    background: var(--deep);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 40px;
+    overflow: hidden;
+    border-right: 1px solid var(--border);
+  }
+
+  .left-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 30% 30%, rgba(124,92,252,0.14) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 50% at 80% 80%, rgba(0,229,195,0.08) 0%, transparent 60%);
+  }
+
+  .left-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(37,37,69,0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37,37,69,0.25) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .left-content { position: relative; z-index: 1; }
+
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 1.3rem; color: var(--bright);
+    text-decoration: none; margin-bottom: 80px;
+  }
+  .brand span { color: var(--accent); }
+  .brand-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent2);
+    box-shadow: 0 0 10px var(--accent2);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .left-headline {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    color: var(--bright); line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .left-headline em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .left-sub {
+    font-size: 1rem; color: var(--text);
+    line-height: 1.7; max-width: 400px; margin-bottom: 48px;
+  }
+
+  /* Skill preview card */
+  .skill-preview {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px;
+    max-width: 400px;
+    position: relative; overflow: hidden;
+  }
+  .skill-preview::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(124,92,252,0.06), transparent);
+    pointer-events: none;
+  }
+  .sp-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px;
+  }
+  .sp-title {
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 0.9rem; color: var(--bright);
+  }
+  .sp-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem; padding: 3px 10px;
+    border-radius: 100px;
+    color: var(--accent2); border: 1px solid rgba(0,229,195,0.3);
+    background: rgba(0,229,195,0.07);
+  }
+  .sp-bars { display: flex; flex-direction: column; gap: 12px; }
+  .sp-row { display: flex; flex-direction: column; gap: 5px; }
+  .sp-meta { display: flex; justify-content: space-between; }
+  .sp-name { font-size: 0.8rem; color: var(--text); }
+  .sp-pct  { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+  .bar-track { height: 5px; background: var(--panel); border-radius: 100px; overflow: hidden; }
+  .bar-fill  { height: 100%; border-radius: 100px; transition: width 1.8s cubic-bezier(.4,0,.2,1); }
+  .f1 { background: linear-gradient(90deg, var(--accent), #A07CFF); }
+  .f2 { background: linear-gradient(90deg, var(--accent2), #66F0DD); }
+  .f3 { background: linear-gradient(90deg, var(--gold), #FFA943); }
+
+  .sp-footer {
+    display: flex; gap: 12px; margin-top: 20px;
+    padding-top: 20px; border-top: 1px solid var(--border);
+  }
+  .sp-stat {
+    flex: 1; background: var(--panel);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px; text-align: center;
+  }
+  .sp-stat-val {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 1.4rem; color: var(--bright);
+  }
+  .sp-stat-label { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+
+  .left-footer {
+    position: relative; z-index: 1;
+    display: flex; gap: 24px; margin-top: 32px;
+  }
+  .lf-stat { }
+  .lf-num {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 1.4rem; color: var(--bright);
+  }
+  .lf-label { font-size: 0.75rem; color: var(--muted); }
+
+  /* ── RIGHT PANEL (AUTH FORM) ── */
+  .right-panel {
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px; overflow-y: auto;
+  }
+
+  .auth-box {
+    width: 100%; max-width: 440px;
+  }
+
+  /* Tabs */
+  .auth-tabs {
+    display: flex;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 4px;
+    margin-bottom: 36px;
+  }
+  .tab-btn {
+    flex: 1; padding: 10px;
+    border-radius: 9px; border: none;
+    background: transparent; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem; font-weight: 600;
+    color: var(--muted); transition: all 0.25s;
+  }
+  .tab-btn.active {
+    background: var(--card);
+    color: var(--bright);
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .auth-title {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 1.75rem; color: var(--bright);
+    margin-bottom: 6px;
+  }
+  .auth-sub {
+    font-size: 0.875rem; color: var(--muted);
+    margin-bottom: 32px; line-height: 1.6;
+  }
+  .auth-sub a { color: var(--accent); text-decoration: none; }
+  .auth-sub a:hover { text-decoration: underline; }
+
+  /* Social login */
+  .social-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-bottom: 28px;
+  }
+  .social-btn-auth {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 11px 16px; border-radius: 10px;
+    background: var(--panel); border: 1px solid var(--border);
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--text); cursor: pointer;
+    transition: all 0.2s; font-family: 'Inter', sans-serif;
+  }
+  .social-btn-auth:hover { border-color: var(--accent); color: var(--bright); }
+  .social-icon { font-size: 1rem; }
+
+  .divider {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 28px;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text {
+    font-size: 0.75rem; color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Form */
+  .form { display: flex; flex-direction: column; gap: 18px; }
+
+  .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field label {
+    font-size: 0.8rem; font-weight: 600;
+    color: var(--text); letter-spacing: 0.02em;
+  }
+  .input-wrap { position: relative; }
+  .input-icon {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem; pointer-events: none;
+    color: var(--muted);
+  }
+  .input-field {
+    width: 100%; padding: 11px 14px 11px 40px;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--bright);
+    font-size: 0.875rem; font-family: 'Inter', sans-serif;
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+  }
+  .input-field::placeholder { color: var(--muted); }
+  .input-field:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,92,252,0.12);
+  }
+  .input-field.error { border-color: var(--warn); }
+  .input-field.success { border-color: var(--accent2); }
+
+  .field-hint {
+    font-size: 0.72rem; color: var(--muted);
+  }
+  .field-error { font-size: 0.72rem; color: var(--warn); display: none; }
+  .field-error.visible { display: block; }
+
+  /* Password toggle */
+  .toggle-pw {
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    cursor: pointer; color: var(--muted);
+    font-size: 0.85rem; padding: 0;
+    transition: color 0.2s;
+  }
+  .toggle-pw:hover { color: var(--text); }
+
+  /* Strength bar */
+  .pw-strength { margin-top: 8px; }
+  .strength-track {
+    height: 3px; background: var(--border);
+    border-radius: 100px; overflow: hidden; margin-bottom: 5px;
+  }
+  .strength-fill {
+    height: 100%; border-radius: 100px;
+    transition: width 0.4s, background 0.4s;
+    width: 0%;
+  }
+  .strength-label {
+    font-size: 0.7rem; color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Domain select */
+  .select-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .domain-opt {
+    padding: 10px 8px; border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--panel); cursor: pointer;
+    text-align: center; transition: all 0.2s;
+    font-size: 0.75rem; color: var(--muted);
+    font-family: 'Inter', sans-serif;
+  }
+  .domain-opt:hover { border-color: var(--accent); color: var(--text); }
+  .domain-opt.selected {
+    border-color: var(--accent2); color: var(--bright);
+    background: rgba(0,229,195,0.06);
+  }
+  .domain-icon { font-size: 1.2rem; margin-bottom: 4px; display: block; }
+
+  /* Checkbox */
+  .check-row {
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .check-input {
+    width: 16px; height: 16px; margin-top: 2px;
+    accent-color: var(--accent); cursor: pointer; flex-shrink: 0;
+  }
+  .check-label {
+    font-size: 0.8rem; color: var(--muted); line-height: 1.5;
+  }
+  .check-label a { color: var(--accent); text-decoration: none; }
+
+  /* Submit */
+  .submit-btn {
+    width: 100%; padding: 13px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 10px;
+    font-size: 0.9375rem; font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 0 24px var(--glow);
+    position: relative; overflow: hidden;
+  }
+  .submit-btn:hover { background: #6A4AEA; transform: translateY(-1px); box-shadow: 0 4px 32px var(--glow); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn.loading { pointer-events: none; opacity: 0.8; }
+  .btn-spinner {
+    width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin 0.7s linear infinite; display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .submit-btn.loading .btn-spinner { display: block; }
+  .submit-btn.loading .btn-text { display: none; }
+
+  .forgot-link {
+    text-align: right; font-size: 0.8rem;
+    color: var(--accent); text-decoration: none;
+  }
+  .forgot-link:hover { text-decoration: underline; }
+
+  /* Success state */
+  .success-box {
+    display: none; text-align: center; padding: 40px 20px;
+  }
+  .success-box.visible { display: block; }
+  .success-icon {
+    width: 72px; height: 72px; margin: 0 auto 20px;
+    background: rgba(0,229,195,0.1);
+    border: 1px solid rgba(0,229,195,0.3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+  }
+  .success-title {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 1.5rem; color: var(--bright); margin-bottom: 8px;
+  }
+  .success-sub { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 32px; right: 32px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.35s cubic-bezier(.4,0,.2,1);
+    z-index: 200; max-width: 340px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { font-size: 1.1rem; }
+  .toast-text { font-size: 0.85rem; color: var(--text); }
+  .toast-title { font-weight: 600; color: var(--bright); margin-bottom: 2px; }
+
+  /* Step indicators for register */
+  .step-indicator {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 32px;
+  }
+  .step-item {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .step-circle {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid var(--border);
+    background: var(--panel); color: var(--muted);
+    transition: all 0.3s; flex-shrink: 0;
+  }
+  .step-circle.done { background: var(--accent2); border-color: var(--accent2); color: var(--ink); }
+  .step-circle.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 12px var(--glow); }
+  .step-label {
+    font-size: 0.72rem; color: var(--muted);
+    white-space: nowrap;
+  }
+  .step-label.active { color: var(--bright); }
+  .step-connector {
+    flex: 1; height: 1px; background: var(--border);
+    margin: 0 10px; min-width: 20px;
+  }
+
+  /* Floating orb */
+  .orb {
+    position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none;
+  }
+  .orb-1 {
+    width: 300px; height: 300px;
+    background: rgba(124,92,252,0.15);
+    top: -80px; left: -80px;
+    animation: drift1 8s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 200px; height: 200px;
+    background: rgba(0,229,195,0.1);
+    bottom: 60px; right: 40px;
+    animation: drift2 10s ease-in-out infinite;
+  }
+  @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,30px)} }
+  @keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-15px,-20px)} }
+
+  /* Progress ring for register */
+  .form-page { display: none; }
+  .form-page.active { display: flex; flex-direction: column; gap: 18px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    body { grid-template-columns: 1fr; }
+    .left-panel { display: none; }
+    .right-panel { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+  <div class="left-bg"></div>
+  <div class="left-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="left-content">
+    <a href="skillsphere.html" class="brand">
+      <span class="brand-dot"></span>
+      Skill<span>Sphere</span> AI
+    </a>
+
+    <h1 class="left-headline">
+      Your career<br/>starts with<br/><em>knowing yourself</em>
+    </h1>
+    <p class="left-sub">
+      Join 48,000+ students who discovered their strengths, mapped their career path, and earned verified certificates — all in one platform.
+    </p>
+
+    <div class="skill-preview">
+      <div class="sp-header">
+        <span class="sp-title">Sample Skill Report</span>
+        <span class="sp-badge">AI GENERATED</span>
+      </div>
+      <div class="sp-bars">
+        <div class="sp-row">
+          <div class="sp-meta"><span class="sp-name">Problem Solving</span><span class="sp-pct">88%</span></div>
+          <div class="bar-track"><div class="bar-fill f1" style="width:88%" id="b1"></div></div>
+        </div>
+        <div class="sp-row">
+          <div class="sp-meta"><span class="sp-name">Data Analysis</span><span class="sp-pct">74%</span></div>
+          <div class="bar-track"><div class="bar-fill f2" style="width:74%" id="b2"></div></div>
+        </div>
+        <div class="sp-row">
+          <div class="sp-meta"><span class="sp-name">Communication</span><span class="sp-pct">91%</span></div>
+          <div class="bar-track"><div class="bar-fill f3" style="width:91%" id="b3"></div></div>
+        </div>
+      </div>
+      <div class="sp-footer">
+        <div class="sp-stat">
+          <div class="sp-stat-val" style="color:var(--accent2)">A+</div>
+          <div class="sp-stat-label">Grade</div>
+        </div>
+        <div class="sp-stat">
+          <div class="sp-stat-val" style="color:var(--accent)">Top 5%</div>
+          <div class="sp-stat-label">Nationally</div>
+        </div>
+        <div class="sp-stat">
+          <div class="sp-stat-val" style="color:var(--gold)">3</div>
+          <div class="sp-stat-label">Careers Matched</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="left-footer">
+    <div class="lf-stat">
+      <div class="lf-num">48K+</div>
+      <div class="lf-label">Students</div>
+    </div>
+    <div class="lf-stat">
+      <div class="lf-num">200+</div>
+      <div class="lf-label">Careers</div>
+    </div>
+    <div class="lf-stat">
+      <div class="lf-num">94%</div>
+      <div class="lf-label">Accuracy</div>
+    </div>
+    <div class="lf-stat">
+      <div class="lf-num">Free</div>
+      <div class="lf-label">To Start</div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <div class="auth-box">
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+      <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Create Account</button>
+    </div>
+
+    <!-- ══ LOGIN FORM ══ -->
+    <div id="login-section">
+      <h2 class="auth-title">Welcome back</h2>
+      <p class="auth-sub">New here? <a href="#" onclick="switchTab('register')">Create a free account →</a></p>
+
+      <div class="social-row">
+        <button class="social-btn-auth" onclick="socialLogin('Google')">
+          <span class="social-icon">🔵</span> Google
+        </button>
+        <button class="social-btn-auth" onclick="socialLogin('GitHub')">
+          <span class="social-icon">⚫</span> GitHub
+        </button>
+      </div>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="form">
+        <div class="field">
+          <label for="login-email">Email address</label>
+          <div class="input-wrap">
+            <span class="input-icon">✉</span>
+            <input type="email" id="login-email" class="input-field"
+              placeholder="you@example.com"
+              oninput="validateEmail(this)"/>
+          </div>
+          <span class="field-error" id="login-email-err">Enter a valid email address.</span>
+        </div>
+
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label for="login-pw">Password</label>
+            <a href="#" class="forgot-link" onclick="showForgot(event)">Forgot password?</a>
+          </div>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="login-pw" class="input-field"
+              placeholder="Enter your password"/>
+            <button class="toggle-pw" onclick="togglePw('login-pw', this)" type="button">👁</button>
+          </div>
+        </div>
+
+        <div class="check-row">
+          <input type="checkbox" class="check-input" id="remember-me"/>
+          <label class="check-label" for="remember-me">Keep me signed in on this device</label>
+        </div>
+
+        <button class="submit-btn" id="login-btn" onclick="handleLogin()">
+          <div class="btn-spinner"></div>
+          <span class="btn-text">Sign In →</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ══ REGISTER FORM ══ -->
+    <div id="register-section" style="display:none;">
+      <div class="step-indicator" id="step-indicator">
+        <div class="step-item">
+          <div class="step-circle active" id="sc1">1</div>
+          <span class="step-label active" id="sl1">Account</span>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-circle" id="sc2">2</div>
+          <span class="step-label" id="sl2">Profile</span>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step-item">
+          <div class="step-circle" id="sc3">3</div>
+          <span class="step-label" id="sl3">Interests</span>
+        </div>
+      </div>
+
+      <!-- Step 1: Account -->
+      <div class="form-page active" id="reg-step-1">
+        <h2 class="auth-title">Create account</h2>
+        <p class="auth-sub">Already have one? <a href="#" onclick="switchTab('login')">Sign in →</a></p>
+
+        <div class="social-row">
+          <button class="social-btn-auth" onclick="socialLogin('Google')">
+            <span class="social-icon">🔵</span> Google
+          </button>
+          <button class="social-btn-auth" onclick="socialLogin('GitHub')">
+            <span class="social-icon">⚫</span> GitHub
+          </button>
+        </div>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <span class="divider-text">or fill in</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="input-row">
+          <div class="field">
+            <label for="reg-fname">First name</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="reg-fname" class="input-field" placeholder="Arjun"/>
+            </div>
+          </div>
+          <div class="field">
+            <label for="reg-lname">Last name</label>
+            <div class="input-wrap">
+              <span class="input-icon">👤</span>
+              <input type="text" id="reg-lname" class="input-field" placeholder="Mehta"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="reg-email">Email address</label>
+          <div class="input-wrap">
+            <span class="input-icon">✉</span>
+            <input type="email" id="reg-email" class="input-field"
+              placeholder="arjun@college.edu"
+              oninput="validateEmail(this)"/>
+          </div>
+          <span class="field-error" id="reg-email-err">Enter a valid email address.</span>
+        </div>
+
+        <div class="field">
+          <label for="reg-pw">Password</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="reg-pw" class="input-field"
+              placeholder="Min. 8 characters"
+              oninput="checkStrength(this.value)"/>
+            <button class="toggle-pw" onclick="togglePw('reg-pw', this)" type="button">👁</button>
+          </div>
+          <div class="pw-strength">
+            <div class="strength-track">
+              <div class="strength-fill" id="strength-fill"></div>
+            </div>
+            <span class="strength-label" id="strength-label">Enter a password</span>
+          </div>
+        </div>
+
+        <div class="check-row">
+          <input type="checkbox" class="check-input" id="agree-terms"/>
+          <label class="check-label" for="agree-terms">
+            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+          </label>
+        </div>
+
+        <button class="submit-btn" onclick="goToStep(2)">
+          <span class="btn-text">Continue →</span>
+        </button>
+      </div>
+
+      <!-- Step 2: Profile -->
+      <div class="form-page" id="reg-step-2">
+        <h2 class="auth-title">Your profile</h2>
+        <p class="auth-sub" style="margin-bottom:24px;">Help us personalize your experience</p>
+
+        <div class="field">
+          <label for="reg-college">College / University</label>
+          <div class="input-wrap">
+            <span class="input-icon">🏛</span>
+            <input type="text" id="reg-college" class="input-field" placeholder="Anna University, Chennai"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="reg-degree">Degree & Branch</label>
+          <div class="input-wrap">
+            <span class="input-icon">🎓</span>
+            <input type="text" id="reg-degree" class="input-field" placeholder="B.E. Computer Science"/>
+          </div>
+        </div>
+
+        <div class="input-row">
+          <div class="field">
+            <label for="reg-year">Year of Study</label>
+            <div class="input-wrap">
+              <span class="input-icon">📅</span>
+              <select id="reg-year" class="input-field" style="padding-left:40px;cursor:pointer;">
+                <option value="" style="background:#1A1A32">Select year</option>
+                <option style="background:#1A1A32">1st Year</option>
+                <option style="background:#1A1A32">2nd Year</option>
+                <option style="background:#1A1A32">3rd Year</option>
+                <option style="background:#1A1A32">4th Year</option>
+                <option style="background:#1A1A32">Alumni</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="reg-phone">Phone (optional)</label>
+            <div class="input-wrap">
+              <span class="input-icon">📱</span>
+              <input type="tel" id="reg-phone" class="input-field" placeholder="+91 99999 00000"/>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:4px;">
+          <button class="submit-btn" style="background:var(--panel);color:var(--text);box-shadow:none;border:1px solid var(--border);flex:0 0 auto;width:auto;padding:13px 24px;" onclick="goToStep(1)">
+            ← Back
+          </button>
+          <button class="submit-btn" style="flex:1;" onclick="goToStep(3)">
+            <span class="btn-text">Continue →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Interests -->
+      <div class="form-page" id="reg-step-3">
+        <h2 class="auth-title">Pick your domain</h2>
+        <p class="auth-sub" style="margin-bottom:24px;">Choose one to tailor your first assessment</p>
+
+        <div class="field">
+          <label>Which field interests you most?</label>
+          <div class="select-grid" id="domain-grid">
+            <div class="domain-opt selected" onclick="selectDomain(this)">
+              <span class="domain-icon">💻</span>
+              Computer Science
+            </div>
+            <div class="domain-opt" onclick="selectDomain(this)">
+              <span class="domain-icon">📊</span>
+              Data Science
+            </div>
+            <div class="domain-opt" onclick="selectDomain(this)">
+              <span class="domain-icon">🎨</span>
+              UX / Design
+            </div>
+            <div class="domain-opt" onclick="selectDomain(this)">
+              <span class="domain-icon">📈</span>
+              Management
+            </div>
+            <div class="domain-opt" onclick="selectDomain(this)">
+              <span class="domain-icon">⚡</span>
+              Electronics
+            </div>
+            <div class="domain-opt" onclick="selectDomain(this)">
+              <span class="domain-icon">🤖</span>
+              AI / ML
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Your career goal (optional)</label>
+          <div class="input-wrap">
+            <span class="input-icon">🎯</span>
+            <input type="text" class="input-field" placeholder="e.g. Software Engineer at a product startup"/>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;">
+          <button class="submit-btn" style="background:var(--panel);color:var(--text);box-shadow:none;border:1px solid var(--border);flex:0 0 auto;width:auto;padding:13px 24px;" onclick="goToStep(2)">
+            ← Back
+          </button>
+          <button class="submit-btn" id="reg-btn" style="flex:1;" onclick="handleRegister()">
+            <div class="btn-spinner"></div>
+            <span class="btn-text">Create My Account 🚀</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Success state -->
+      <div class="success-box" id="reg-success">
+        <div class="success-icon">✓</div>
+        <div class="success-title">You're in, !<br/>Welcome to SkillSphere.</div>
+        <p class="success-sub">
+          Your account is ready. We're generating your personalized first assessment based on your domain choice.
+        </p>
+        <button class="submit-btn" style="margin-top:28px;" onclick="goToDashboard()">
+          <span class="btn-text">Go to Dashboard →</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">✓</span>
+  <div>
+    <div class="toast-title" id="toast-title">Success</div>
+    <div class="toast-text" id="toast-text"></div>
+  </div>
+</div>
+
+<script>
+  /* ── TABS ── */
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('tab-login').classList.toggle('active', isLogin);
+    document.getElementById('tab-register').classList.toggle('active', !isLogin);
+    document.getElementById('login-section').style.display = isLogin ? 'block' : 'none';
+    document.getElementById('register-section').style.display = isLogin ? 'none' : 'block';
+    if (!isLogin) goToStep(1);
+  }
+
+  /* ── STEPS ── */
+  let currentStep = 1;
+  function goToStep(n) {
+    [1, 2, 3].forEach(i => {
+      document.getElementById('reg-step-' + i).classList.toggle('active', i === n);
+      const sc = document.getElementById('sc' + i);
+      const sl = document.getElementById('sl' + i);
+      if (i < n) {
+        sc.classList.remove('active'); sc.classList.add('done'); sc.textContent = '✓';
+        sl.classList.remove('active');
+      } else if (i === n) {
+        sc.classList.add('active'); sc.classList.remove('done'); sc.textContent = i;
+        sl.classList.add('active');
+      } else {
+        sc.classList.remove('active', 'done'); sc.textContent = i;
+        sl.classList.remove('active');
+      }
+    });
+    currentStep = n;
+  }
+
+  /* ── DOMAIN SELECT ── */
+  function selectDomain(el) {
+    document.querySelectorAll('.domain-opt').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  /* ── PASSWORD TOGGLE ── */
+  function togglePw(id, btn) {
+    const input = document.getElementById(id);
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.textContent = show ? '🙈' : '👁';
+  }
+
+  /* ── PASSWORD STRENGTH ── */
+  function checkStrength(val) {
+    const fill = document.getElementById('strength-fill');
+    const label = document.getElementById('strength-label');
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const levels = [
+      { pct: '0%',   color: 'transparent', text: 'Enter a password' },
+      { pct: '25%',  color: '#FF6B6B',     text: 'Weak' },
+      { pct: '50%',  color: '#FFD166',     text: 'Fair' },
+      { pct: '75%',  color: '#7C5CFC',     text: 'Good' },
+      { pct: '100%', color: '#00E5C3',     text: 'Strong ✓' },
+    ];
+    const l = levels[score];
+    fill.style.width = l.pct;
+    fill.style.background = l.color;
+    label.textContent = l.text;
+    label.style.color = l.color === 'transparent' ? 'var(--muted)' : l.color;
+  }
+
+  /* ── EMAIL VALIDATION ── */
+  function validateEmail(input) {
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+    const errId = input.id + '-err';
+    input.classList.toggle('error', !ok && input.value.length > 3);
+    input.classList.toggle('success', ok);
+    const err = document.getElementById(errId);
+    if (err) err.classList.toggle('visible', !ok && input.value.length > 3);
+  }
+
+  /* ── SOCIAL LOGIN ── */
+  function socialLogin(provider) {
+    showToast('info', `Connecting to ${provider}…`, `Redirecting to ${provider} OAuth`);
+  }
+
+  /* ── LOGIN HANDLER ── */
+  function handleLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const pw = document.getElementById('login-pw').value;
+    if (!email || !pw) {
+      showToast('error', 'Missing fields', 'Please enter your email and password.');
+      return;
+    }
+    const btn = document.getElementById('login-btn');
+    btn.classList.add('loading');
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      showToast('success', 'Signed in!', 'Redirecting to your dashboard…');
+      setTimeout(() => {
+        window.location.href = 'skillsphere.html';
+      }, 1400);
+    }, 1800);
+  }
+
+  /* ── REGISTER HANDLER ── */
+  function handleRegister() {
+    const fname = document.getElementById('reg-fname').value.trim();
+    const btn = document.getElementById('reg-btn');
+    btn.classList.add('loading');
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      document.getElementById('reg-step-3').classList.remove('active');
+      const success = document.getElementById('reg-success');
+      success.classList.add('visible');
+      success.querySelector('.success-title').innerHTML =
+        `You're in, ${fname || 'there'}!<br/>Welcome to SkillSphere.`;
+      document.getElementById('step-indicator').style.display = 'none';
+      showToast('success', 'Account created!', 'Your AI assessment is being prepared.');
+    }, 2000);
+  }
+
+  /* ── FORGOT PASSWORD ── */
+  function showForgot(e) {
+    e.preventDefault();
+    showToast('info', 'Reset link sent', 'Check your email for a password reset link.');
+  }
+
+  /* ── GO TO DASHBOARD ── */
+  function goToDashboard() {
+    window.location.href = 'skillsphere.html';
+  }
+
+  /* ── TOAST ── */
+  function showToast(type, title, text) {
+    const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+    document.getElementById('toast-icon').textContent = icons[type] || '✅';
+    document.getElementById('toast-title').textContent = title;
+    document.getElementById('toast-text').textContent = text;
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  /* ── ANIMATE BARS ── */
+  window.addEventListener('load', () => {
+    ['b1','b2','b3'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const w = el.style.width;
+      el.style.width = '0';
+      setTimeout(() => el.style.width = w, 300);
+    });
+  });
+
+  /* ── KEYBOARD ── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      if (document.getElementById('login-section').style.display !== 'none') {
+        handleLogin();
+      }
+    }
+  });
+</script>
+</body>
+</html>
