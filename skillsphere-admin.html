@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillSphere AI — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --ink:    #0A0A12;
+  --deep:   #0F0F1E;
+  --panel:  #141428;
+  --card:   #1A1A32;
+  --border: #252545;
+  --muted:  #4A4A72;
+  --text:   #C8C8E8;
+  --bright: #E8E8FF;
+  --accent: #7C5CFC;
+  --a2:     #00E5C3;
+  --warn:   #FF6B6B;
+  --gold:   #FFD166;
+  --glow:   rgba(124,92,252,0.22);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--ink);color:var(--text);
+  min-height:100vh;display:flex;overflow:hidden;
+}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:240px;min-height:100vh;
+  background:var(--deep);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  flex-shrink:0;position:fixed;top:0;left:0;bottom:0;
+  z-index:50;
+}
+.sb-logo{
+  padding:24px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.1rem;color:var(--bright);
+  text-decoration:none;
+}
+.sb-logo span{color:var(--accent)}
+.logo-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--a2);box-shadow:0 0 8px var(--a2);
+  animation:pulse 2s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.sb-section-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.62rem;letter-spacing:0.15em;
+  color:var(--muted);text-transform:uppercase;
+  padding:20px 20px 8px;
+}
+.sb-nav{list-style:none;padding:0 10px;display:flex;flex-direction:column;gap:2px}
+.sb-item a{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:8px;
+  color:var(--muted);text-decoration:none;
+  font-size:0.85rem;font-weight:500;
+  transition:all 0.2s;
+}
+.sb-item a:hover{color:var(--bright);background:var(--panel)}
+.sb-item.active a{color:var(--bright);background:var(--panel);border:1px solid var(--border)}
+.sb-item.active a .sb-icon{color:var(--accent)}
+.sb-icon{font-size:1rem;min-width:20px;text-align:center}
+.sb-badge{
+  margin-left:auto;
+  background:var(--warn);color:#fff;
+  font-size:0.65rem;font-weight:700;
+  padding:1px 7px;border-radius:100px;
+}
+.sb-badge.green{background:var(--a2);color:var(--ink)}
+
+.sb-bottom{
+  margin-top:auto;padding:16px 10px;
+  border-top:1px solid var(--border);
+}
+.admin-profile{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;
+  background:var(--panel);border:1px solid var(--border);
+  cursor:pointer;transition:border-color 0.2s;
+}
+.admin-profile:hover{border-color:var(--accent)}
+.admin-av{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--a2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;color:#fff;font-weight:700;flex-shrink:0;
+}
+.admin-name{font-size:0.8rem;font-weight:600;color:var(--bright)}
+.admin-role{font-size:0.7rem;color:var(--muted);margin-top:1px}
+.admin-dots{margin-left:auto;color:var(--muted);font-size:1rem}
+
+/* ── MAIN ── */
+.main{
+  margin-left:240px;flex:1;
+  display:flex;flex-direction:column;
+  min-height:100vh;overflow-y:auto;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  background:rgba(10,10,18,0.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;height:60px;
+}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.page-title{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.1rem;color:var(--bright);
+}
+.breadcrumb{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.7rem;color:var(--muted);
+}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.search-bar{
+  display:flex;align-items:center;gap:8px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;padding:7px 14px;
+  font-size:0.8rem;
+}
+.search-bar input{
+  background:none;border:none;outline:none;
+  color:var(--text);font-family:'Inter',sans-serif;
+  font-size:0.8rem;width:180px;
+}
+.search-bar input::placeholder{color:var(--muted)}
+.icon-btn{
+  width:36px;height:36px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:border-color 0.2s;font-size:1rem;
+  position:relative;
+}
+.icon-btn:hover{border-color:var(--accent)}
+.notif-dot{
+  position:absolute;top:6px;right:6px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--warn);border:1px solid var(--ink);
+}
+.status-pill{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(0,229,195,0.07);
+  border:1px solid rgba(0,229,195,0.2);
+  border-radius:100px;padding:5px 12px;
+  font-size:0.72rem;color:var(--a2);
+  font-family:'JetBrains Mono',monospace;
+}
+.status-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--a2);box-shadow:0 0 6px var(--a2);
+  animation:pulse 1.5s ease-in-out infinite;
+}
+
+/* ── CONTENT ── */
+.content{padding:28px 32px;flex:1}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:22px 24px;
+  position:relative;overflow:hidden;
+  transition:transform 0.2s,border-color 0.2s;
+}
+.stat-card:hover{transform:translateY(-2px);border-color:var(--accent)}
+.stat-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  transform:scaleX(0);transform-origin:left;transition:transform 0.3s;
+}
+.stat-card:hover::after{transform:scaleX(1)}
+.sc-green::after{background:linear-gradient(90deg,var(--a2),transparent)}
+.sc-purple::after{background:linear-gradient(90deg,var(--accent),transparent)}
+.sc-gold::after{background:linear-gradient(90deg,var(--gold),transparent)}
+.sc-red::after{background:linear-gradient(90deg,var(--warn),transparent)}
+
+.stat-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.stat-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+  border:1px solid;
+}
+.si-green{background:rgba(0,229,195,0.1);border-color:rgba(0,229,195,0.25)}
+.si-purple{background:rgba(124,92,252,0.1);border-color:rgba(124,92,252,0.25)}
+.si-gold{background:rgba(255,209,102,0.1);border-color:rgba(255,209,102,0.25)}
+.si-red{background:rgba(255,107,107,0.1);border-color:rgba(255,107,107,0.25)}
+
+.stat-change{
+  font-family:'JetBrains Mono',monospace;
+  font-size:0.7rem;padding:2px 8px;border-radius:100px;
+}
+.change-up{background:rgba(0,229,195,0.1);color:var(--a2)}
+.change-dn{background:rgba(255,107,107,0.1);color:var(--warn)}
+.stat-val{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.9rem;color:var(--bright);margin-bottom:4px;
+}
+.stat-label{font-size:0.78rem;color:var(--muted)}
+
+/* ── GRID LAYOUT ── */
+.grid-2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:24px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.grid-full{margin-bottom:24px}
+
+/* ── PANEL ── */
+.panel{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;
+}
+.panel-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 24px;border-bottom:1px solid var(--border);
+}
+.panel-title{
+  font-family:'Syne',sans-serif;font-weight:700;
+  font-size:0.95rem;color:var(--bright);
+}
+.panel-sub{font-size:0.75rem;color:var(--muted);margin-top:2px}
+.panel-body{padding:20px 24px}
+.panel-actions{display:flex;gap:8px}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 16px;border-radius:8px;
+  font-size:0.8rem;font-weight:600;cursor:pointer;
+  border:none;font-family:'Inter',sans-serif;transition:all 0.2s;
+}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 0 16px var(--glow)}
+.btn-primary:hover{background:#6A4AEA}
+.btn-ghost{background:var(--panel);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--bright)}
+.btn-danger{background:rgba(255,107,107,0.1);color:var(--warn);border:1px solid rgba(255,107,107,0.2)}
+.btn-danger:hover{background:rgba(255,107,107,0.2)}
+.btn-success{background:rgba(0,229,195,0.1);color:var(--a2);border:1px solid rgba(0,229,195,0.2)}
+.btn-success:hover{background:rgba(0,229,195,0.2)}
+.btn-sm{padding:5px 12px;font-size:0.75rem}
+.btn-xs{padding:3px 10px;font-size:0.7rem}
+
+/* ── CHART BAR (pure CSS) ── */
+.chart-wrap{padding:8px 0}
+.chart-bars{
+  display:flex;align-items:flex-end;gap:8px;
+  height:120px;
+}
+.chart-bar-col{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;gap:6px;height:100%;
+  justify-content:flex-end;
+}
+.chart-bar{
+  width:100%;border-radius:4px 4px 0 0;
+  min-height:4px;position:relative;
+  transition:height 1s cubic-bezier(.4,0,.2,1);
+  cursor:pointer;
+}
+.chart-bar:hover::after{
+  content:attr(data-val);
+  position:absolute;top:-22px;left:50%;
+  transform:translateX(-50%);
+  font-size:0.65rem;color:var(--bright);
+  background:var(--panel);border:1px solid var(--border);
+  padding:2px 6px;border-radius:4px;white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;
+}
+.bar-primary{background:linear-gradient(to top,var(--accent),#A07CFF)}
+.bar-accent2{background:linear-gradient(to top,var(--a2),#66F0DD)}
+.chart-x-label{font-size:0.65rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+.chart-legend{
+  display:flex;gap:16px;margin-top:12px;padding-top:12px;
+  border-top:1px solid var(--border);
+}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:2px}
+
+/* ── RING CHART ── */
+.rings-row{display:flex;gap:20px;justify-content:space-around;padding:8px 0}
+.ring-item{text-align:center}
+.ring-svg{width:80px;height:80px}
+.ring-val{font-family:'Syne',sans-serif;font-weight:800;font-size:0.85rem;color:var(--bright)}
+.ring-lbl{font-size:0.65rem;color:var(--muted);margin-top:2px}
+
+/* ── TABLE ── */
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{
+  text-align:left;padding:10px 16px;
+  font-size:0.7rem;color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+  text-transform:uppercase;letter-spacing:0.05em;
+  background:var(--panel);border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+.data-table td{
+  padding:12px 16px;border-bottom:1px solid rgba(37,37,69,0.5);
+  font-size:0.82rem;color:var(--text);vertical-align:middle;
+}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tbody tr{transition:background 0.15s}
+.data-table tbody tr:hover{background:rgba(124,92,252,0.04)}
+
+/* user cell */
+.user-cell{display:flex;align-items:center;gap:10px}
+.user-av{
+  width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:700;color:#fff;flex-shrink:0;
+}
+.user-name{font-weight:600;color:var(--bright);font-size:0.82rem}
+.user-email{font-size:0.7rem;color:var(--muted)}
+
+/* badges */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:0.68rem;padding:3px 9px;border-radius:100px;
+  font-family:'JetBrains Mono',monospace;border:1px solid;
+}
+.badge-green{color:var(--a2);border-color:rgba(0,229,195,0.3);background:rgba(0,229,195,0.07)}
+.badge-purple{color:var(--accent);border-color:rgba(124,92,252,0.3);background:rgba(124,92,252,0.07)}
+.badge-gold{color:var(--gold);border-color:rgba(255,209,102,0.3);background:rgba(255,209,102,0.07)}
+.badge-red{color:var(--warn);border-color:rgba(255,107,107,0.3);background:rgba(255,107,107,0.07)}
+.badge-gray{color:var(--muted);border-color:var(--border);background:var(--panel)}
+
+/* score bar inline */
+.score-mini{display:flex;align-items:center;gap:8px}
+.score-track{flex:1;height:4px;background:var(--panel);border-radius:100px;overflow:hidden;min-width:60px}
+.score-fill{height:100%;border-radius:100px}
+.score-num{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted);min-width:28px}
+
+/* ── ACTIVITY FEED ── */
+.activity-feed{display:flex;flex-direction:column;gap:0}
+.activity-item{
+  display:flex;gap:12px;padding:12px 0;
+  border-bottom:1px solid rgba(37,37,69,0.5);
+}
+.activity-item:last-child{border-bottom:none}
+.act-icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;flex-shrink:0;border:1px solid;
+}
+.act-body{flex:1}
+.act-text{font-size:0.8rem;color:var(--text);line-height:1.5}
+.act-text strong{color:var(--bright)}
+.act-time{font-size:0.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px}
+
+/* ── QUESTION MANAGER ── */
+.q-row{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px;border-radius:10px;border:1px solid var(--border);
+  background:var(--panel);margin-bottom:10px;
+  transition:border-color 0.2s;
+}
+.q-row:hover{border-color:var(--accent)}
+.q-num{
+  min-width:28px;height:28px;border-radius:6px;
+  background:var(--card);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:0.7rem;
+  color:var(--accent);flex-shrink:0;
+}
+.q-content{flex:1}
+.q-text-preview{font-size:0.82rem;color:var(--bright);margin-bottom:6px;line-height:1.4}
+.q-meta-row{display:flex;gap:8px;align-items:center}
+.q-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(10,10,18,0.85);
+  backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:32px;width:100%;max-width:520px;
+  position:relative;
+  animation:modalIn 0.25s cubic-bezier(.4,0,.2,1);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+.modal-close{
+  position:absolute;top:16px;right:16px;
+  width:30px;height:30px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:0.8rem;color:var(--muted);
+}
+.modal-close:hover{color:var(--bright);border-color:var(--accent)}
+.modal-title{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.2rem;color:var(--bright);margin-bottom:6px;
+}
+.modal-sub{font-size:0.82rem;color:var(--muted);margin-bottom:24px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.field label{font-size:0.78rem;font-weight:600;color:var(--text)}
+.field input,.field select,.field textarea{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;padding:9px 12px;
+  color:var(--bright);font-size:0.82rem;
+  font-family:'Inter',sans-serif;outline:none;
+  transition:border-color 0.2s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted)}
+.field select option{background:var(--card)}
+.field textarea{resize:vertical;min-height:80px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:300;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:12px 18px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  transform:translateY(70px);opacity:0;
+  transition:all 0.3s cubic-bezier(.4,0,.2,1);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-icon{font-size:1rem}
+.toast-title{font-weight:600;color:var(--bright);font-size:0.82rem}
+.toast-msg{font-size:0.75rem;color:var(--muted)}
+
+/* ── TAB NAV ── */
+.tab-nav{
+  display:flex;gap:4px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:4px;
+  margin-bottom:20px;
+}
+.tab-nav-btn{
+  flex:1;padding:8px;border-radius:7px;border:none;
+  background:transparent;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:0.8rem;font-weight:600;
+  color:var(--muted);transition:all 0.2s;
+}
+.tab-nav-btn.active{background:var(--card);color:var(--bright);border:1px solid var(--border)}
+
+/* views */
+.view{display:none}
+.view.active{display:block}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{width:56px}
+  .sb-logo span,.sb-section-label,.sb-item a span:not(.sb-icon),.admin-name,.admin-role,.sb-badge{display:none}
+  .sb-logo{padding:16px;justify-content:center}
+  .sb-item a{justify-content:center;padding:10px}
+  .main{margin-left:56px}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .content{padding:16px}
+  .topbar{padding:0 16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <a href="skillsphere.html" class="sb-logo">
+    <span class="logo-dot"></span>
+    Skill<span>Sphere</span>
+  </a>
+
+  <p class="sb-section-label">Main</p>
+  <ul class="sb-nav">
+    <li class="sb-item active" onclick="switchView('dashboard',this)">
+      <a href="#"><span class="sb-icon">📊</span><span>Dashboard</span></a>
+    </li>
+    <li class="sb-item" onclick="switchView('users',this)">
+      <a href="#"><span class="sb-icon">👥</span><span>Students</span>
+      <span class="sb-badge">12</span></a>
+    </li>
+    <li class="sb-item" onclick="switchView('assessments',this)">
+      <a href="#"><span class="sb-icon">📝</span><span>Assessments</span></a>
+    </li>
+    <li class="sb-item" onclick="switchView('questions',this)">
+      <a href="#"><span class="sb-icon">❓</span><span>Questions</span>
+      <span class="sb-badge green">AI</span></a>
+    </li>
+    <li class="sb-item" onclick="switchView('certificates',this)">
+      <a href="#"><span class="sb-icon">🏅</span><span>Certificates</span></a>
+    </li>
+    <li class="sb-item" onclick="switchView('leaderboard',this)">
+      <a href="#"><span class="sb-icon">🏆</span><span>Leaderboard</span></a>
+    </li>
+  </ul>
+
+  <p class="sb-section-label">Config</p>
+  <ul class="sb-nav">
+    <li class="sb-item" onclick="switchView('careers',this)">
+      <a href="#"><span class="sb-icon">🗺️</span><span>Career Paths</span></a>
+    </li>
+    <li class="sb-item" onclick="switchView('reports',this)">
+      <a href="#"><span class="sb-icon">📈</span><span>Reports</span></a>
+    </li>
+    <li class="sb-item" onclick="switchView('settings',this)">
+      <a href="#"><span class="sb-icon">⚙️</span><span>Settings</span></a>
+    </li>
+  </ul>
+
+  <div class="sb-bottom">
+    <div class="admin-profile">
+      <div class="admin-av">SA</div>
+      <div>
+        <div class="admin-name">Super Admin</div>
+        <div class="admin-role">admin@skillsphere.ai</div>
+      </div>
+      <div class="admin-dots">⋯</div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div>
+        <div class="page-title" id="page-title">Dashboard</div>
+        <div class="breadcrumb" id="breadcrumb">Admin / Overview</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-bar">
+        <span style="color:var(--muted)">🔍</span>
+        <input type="text" placeholder="Search students, questions…" id="global-search" oninput="globalSearch(this.value)"/>
+      </div>
+      <div class="icon-btn" onclick="showToast('info','Notifications','No new notifications')">
+        🔔<span class="notif-dot"></span>
+      </div>
+      <div class="icon-btn" onclick="showToast('info','Refreshed','Data is up to date ✓')">🔄</div>
+      <div class="status-pill"><span class="status-dot"></span>System Online</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ VIEW: DASHBOARD ══ -->
+    <div class="view active" id="view-dashboard">
+
+      <div class="stats-row">
+        <div class="stat-card sc-green">
+          <div class="stat-top">
+            <div class="stat-icon si-green">👥</div>
+            <span class="stat-change change-up">↑ 12%</span>
+          </div>
+          <div class="stat-val">48,291</div>
+          <div class="stat-label">Total Students</div>
+        </div>
+        <div class="stat-card sc-purple">
+          <div class="stat-top">
+            <div class="stat-icon si-purple">📝</div>
+            <span class="stat-change change-up">↑ 8%</span>
+          </div>
+          <div class="stat-val">1,24,560</div>
+          <div class="stat-label">Assessments Taken</div>
+        </div>
+        <div class="stat-card sc-gold">
+          <div class="stat-top">
+            <div class="stat-icon si-gold">🏅</div>
+            <span class="stat-change change-up">↑ 21%</span>
+          </div>
+          <div class="stat-val">9,847</div>
+          <div class="stat-label">Certificates Issued</div>
+        </div>
+        <div class="stat-card sc-red">
+          <div class="stat-top">
+            <div class="stat-icon si-red">⚠️</div>
+            <span class="stat-change change-dn">↑ 3</span>
+          </div>
+          <div class="stat-val">12</div>
+          <div class="stat-label">Pending Reviews</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Activity Chart -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Assessment Activity</div>
+              <div class="panel-sub">Last 7 days — daily submissions</div>
+            </div>
+            <div class="panel-actions">
+              <button class="btn btn-ghost btn-sm">Export</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="chart-wrap">
+              <div class="chart-bars" id="activity-chart">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Assessments</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--a2)"></div>Certificates</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Live Activity</div>
+              <div class="panel-sub">Real-time platform events</div>
+            </div>
+            <span class="badge badge-green" style="font-size:0.65rem;">● LIVE</span>
+          </div>
+          <div class="panel-body" style="padding:0 24px">
+            <div class="activity-feed" id="activity-feed">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <!-- Domain distribution -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Domain Breakdown</div>
+          </div>
+          <div class="panel-body">
+            <div id="domain-bars"></div>
+          </div>
+        </div>
+
+        <!-- Career match rings -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Top Career Matches</div>
+          </div>
+          <div class="panel-body">
+            <div class="rings-row" id="career-rings"></div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Quick Actions</div>
+          </div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:10px;">
+            <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openModal('add-question')">➕ Add Question</button>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="openModal('add-user')">👤 Add Student</button>
+            <button class="btn btn-success" style="width:100%;justify-content:center;" onclick="openModal('bulk-cert')">🏅 Issue Certificates</button>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="switchView('reports',null)">📈 Generate Report</button>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="showToast('success','Exported','CSV exported successfully')">📤 Export Data</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Students -->
+      <div class="panel grid-full">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Recent Students</div>
+            <div class="panel-sub">Latest registrations this week</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="switchView('users',null)">View All →</button>
+        </div>
+        <div>
+          <table class="data-table" id="recent-table"></table>
+        </div>
+      </div>
+
+    </div><!-- /view-dashboard -->
+
+    <!-- ══ VIEW: STUDENTS ══ -->
+    <div class="view" id="view-users">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">All Students</div>
+            <div class="panel-sub" id="user-count-label">Loading…</div>
+          </div>
+          <div class="panel-actions">
+            <input type="text" placeholder="Filter students…" id="user-filter"
+              oninput="filterUsers(this.value)"
+              style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:0.8rem;outline:none;"/>
+            <button class="btn btn-primary btn-sm" onclick="openModal('add-user')">+ Add Student</button>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('success','Exported','students.csv downloaded')">Export CSV</button>
+          </div>
+        </div>
+        <div><table class="data-table" id="users-table"></table></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px;border-top:1px solid var(--border);">
+          <span style="font-size:0.75rem;color:var(--muted);" id="pagination-info">Showing 1–10 of 48,291</span>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-xs">← Prev</button>
+            <button class="btn btn-ghost btn-xs" style="background:var(--accent);color:#fff;border-color:var(--accent)">1</button>
+            <button class="btn btn-ghost btn-xs">2</button>
+            <button class="btn btn-ghost btn-xs">3</button>
+            <button class="btn btn-ghost btn-xs">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: ASSESSMENTS ══ -->
+    <div class="view" id="view-assessments">
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card sc-green">
+          <div class="stat-top"><div class="stat-icon si-green">✅</div><span class="stat-change change-up">↑ 5%</span></div>
+          <div class="stat-val">1,18,240</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card sc-gold">
+          <div class="stat-top"><div class="stat-icon si-gold">⏳</div></div>
+          <div class="stat-val">6,320</div>
+          <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card sc-red">
+          <div class="stat-top"><div class="stat-icon si-red">❌</div></div>
+          <div class="stat-val">—</div>
+          <div class="stat-label">Abandoned</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Assessment Log</div>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('success','Exported','assessment-log.csv downloaded')">Export</button>
+        </div>
+        <div><table class="data-table" id="assessments-table"></table></div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: QUESTIONS ══ -->
+    <div class="view" id="view-questions">
+      <div class="panel-header" style="padding:0 0 20px 0;">
+        <div>
+          <div class="panel-title" style="font-size:1.1rem">Question Bank</div>
+          <div class="panel-sub">Manage AI-generated and manual questions</div>
+        </div>
+        <div class="panel-actions">
+          <button class="btn btn-success btn-sm" onclick="generateAIQuestion()">🤖 AI Generate</button>
+          <button class="btn btn-primary btn-sm" onclick="openModal('add-question')">+ Add Manual</button>
+        </div>
+      </div>
+      <div class="tab-nav">
+        <button class="tab-nav-btn active" onclick="filterQs('all',this)">All (48)</button>
+        <button class="tab-nav-btn" onclick="filterQs('CS',this)">Computer Science</button>
+        <button class="tab-nav-btn" onclick="filterQs('DS',this)">Data Science</button>
+        <button class="tab-nav-btn" onclick="filterQs('HR',this)">HR / Aptitude</button>
+      </div>
+      <div id="questions-list"></div>
+    </div>
+
+    <!-- ══ VIEW: CERTIFICATES ══ -->
+    <div class="view" id="view-certificates">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Certificate Registry</div>
+            <div class="panel-sub">9,847 certificates issued — all QR-verified</div>
+          </div>
+          <div class="panel-actions">
+            <button class="btn btn-success btn-sm" onclick="openModal('bulk-cert')">🏅 Bulk Issue</button>
+            <button class="btn btn-ghost btn-sm" onclick="showToast('success','Exported','certificates.csv downloaded')">Export</button>
+          </div>
+        </div>
+        <div><table class="data-table" id="cert-table"></table></div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: LEADERBOARD ══ -->
+    <div class="view" id="view-leaderboard">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Global Leaderboard</div>
+          <div class="panel-actions">
+            <select class="btn btn-ghost btn-sm" id="lb-filter" onchange="renderLeaderboard()" style="cursor:pointer">
+              <option>All Domains</option>
+              <option>Computer Science</option>
+              <option>Data Science</option>
+              <option>UX Design</option>
+            </select>
+          </div>
+        </div>
+        <div><table class="data-table" id="lb-table"></table></div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: CAREER PATHS ══ -->
+    <div class="view" id="view-careers">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Career Path Manager</div>
+          <button class="btn btn-primary btn-sm" onclick="openModal('add-career')">+ Add Career Path</button>
+        </div>
+        <div><table class="data-table" id="careers-table"></table></div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: REPORTS ══ -->
+    <div class="view" id="view-reports">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Weekly Score Trends</div></div>
+          <div class="panel-body">
+            <div class="chart-bars" style="height:140px" id="trend-chart"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">College-wise Participation</div></div>
+          <div class="panel-body" id="college-bars"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Export Reports</div>
+        </div>
+        <div class="panel-body" style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn btn-ghost" onclick="showToast('success','Downloaded','weekly-report.pdf')">📄 Weekly PDF</button>
+          <button class="btn btn-ghost" onclick="showToast('success','Downloaded','students.csv')">📊 Students CSV</button>
+          <button class="btn btn-ghost" onclick="showToast('success','Downloaded','scores.xlsx')">📈 Scores Excel</button>
+          <button class="btn btn-ghost" onclick="showToast('success','Downloaded','certificates.csv')">🏅 Cert Registry</button>
+          <button class="btn btn-primary" onclick="showToast('success','Scheduled','Monthly report will be emailed')">📬 Schedule Monthly Email</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ VIEW: SETTINGS ══ -->
+    <div class="view" id="view-settings">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Platform Settings</div></div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:18px;">
+            <div class="field">
+              <label>Platform Name</label>
+              <input type="text" value="SkillSphere AI"/>
+            </div>
+            <div class="field">
+              <label>AI Model</label>
+              <select><option>Claude Sonnet 4.6</option><option>GPT-4o</option><option>Gemini 1.5 Pro</option></select>
+            </div>
+            <div class="field">
+              <label>Max Questions per Assessment</label>
+              <input type="number" value="40"/>
+            </div>
+            <div class="field">
+              <label>Certificate Validity (years)</label>
+              <input type="number" value="2"/>
+            </div>
+            <button class="btn btn-primary" onclick="showToast('success','Saved','Platform settings updated')">Save Changes</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Admin Accounts</div></div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--panel);border:1px solid var(--border);">
+              <div class="admin-av">SA</div>
+              <div style="flex:1"><div class="admin-name">Super Admin</div><div class="admin-role">admin@skillsphere.ai</div></div>
+              <span class="badge badge-purple">Super</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;background:var(--panel);border:1px solid var(--border);">
+              <div class="admin-av" style="background:linear-gradient(135deg,var(--a2),var(--gold))">KR</div>
+              <div style="flex:1"><div class="admin-name">Dr. Kavya Rajan</div><div class="admin-role">kavya@skillsphere.ai</div></div>
+              <span class="badge badge-green">Admin</span>
+            </div>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="openModal('add-admin')">+ Invite Admin</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ══ MODALS ══ -->
+
+<!-- Add Question -->
+<div class="modal-overlay" id="modal-add-question">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('add-question')">✕</div>
+    <div class="modal-title">Add Question</div>
+    <div class="modal-sub">Add to the AI-powered question bank</div>
+    <div class="field">
+      <label>Question Text</label>
+      <textarea placeholder="Enter the question…" rows="3"></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="field">
+        <label>Domain</label>
+        <select><option>Computer Science</option><option>Data Science</option><option>UX Design</option><option>HR / Aptitude</option></select>
+      </div>
+      <div class="field">
+        <label>Difficulty</label>
+        <select><option>Easy</option><option>Medium</option><option>Hard</option></select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Option A</label><input type="text" placeholder="First option"/>
+    </div>
+    <div class="field">
+      <label>Option B</label><input type="text" placeholder="Second option"/>
+    </div>
+    <div class="field">
+      <label>Correct Answer</label>
+      <select><option>A</option><option>B</option><option>C</option><option>D</option></select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('add-question')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveQuestion()">Save Question</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Student -->
+<div class="modal-overlay" id="modal-add-user">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('add-user')">✕</div>
+    <div class="modal-title">Add Student</div>
+    <div class="modal-sub">Manually register a new student account</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="field"><label>First Name</label><input type="text" placeholder="Arjun"/></div>
+      <div class="field"><label>Last Name</label><input type="text" placeholder="Mehta"/></div>
+    </div>
+    <div class="field"><label>Email</label><input type="email" placeholder="arjun@college.edu"/></div>
+    <div class="field"><label>College</label><input type="text" placeholder="NIT Trichy"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="field">
+        <label>Domain</label>
+        <select><option>Computer Science</option><option>Data Science</option><option>UX Design</option></select>
+      </div>
+      <div class="field">
+        <label>Plan</label>
+        <select><option>Starter</option><option>Pro</option><option>Institution</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('add-user')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveUser()">Add Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Certificate -->
+<div class="modal-overlay" id="modal-bulk-cert">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('bulk-cert')">✕</div>
+    <div class="modal-title">Issue Certificates</div>
+    <div class="modal-sub">Issue to students who crossed the score threshold</div>
+    <div class="field">
+      <label>Domain</label>
+      <select><option>All Domains</option><option>Computer Science</option><option>Data Science</option></select>
+    </div>
+    <div class="field">
+      <label>Minimum Score Threshold</label>
+      <input type="number" value="75" min="0" max="100"/>
+    </div>
+    <div class="field">
+      <label>Certificate Type</label>
+      <select><option>Core</option><option>Pro</option><option>Elite</option></select>
+    </div>
+    <div style="background:rgba(0,229,195,0.06);border:1px solid rgba(0,229,195,0.2);border-radius:10px;padding:12px;font-size:0.8rem;color:var(--a2);margin-bottom:4px;">
+      ✓ Estimated: <strong>1,240 students</strong> will receive certificates
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('bulk-cert')">Cancel</button>
+      <button class="btn btn-success" onclick="issueCerts()">Issue Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Career -->
+<div class="modal-overlay" id="modal-add-career">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('add-career')">✕</div>
+    <div class="modal-title">Add Career Path</div>
+    <div class="modal-sub">Define a new career path for matching</div>
+    <div class="field"><label>Career Title</label><input type="text" placeholder="e.g. Cloud Architect"/></div>
+    <div class="field"><label>Domain Tag</label><input type="text" placeholder="e.g. Computer Science"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="field"><label>Min. Salary (LPA)</label><input type="number" placeholder="8"/></div>
+      <div class="field"><label>Max. Salary (LPA)</label><input type="number" placeholder="25"/></div>
+    </div>
+    <div class="field"><label>Required Skills (comma-separated)</label><input type="text" placeholder="AWS, Docker, Kubernetes, Python"/></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('add-career')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCareer()">Save Career</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Admin -->
+<div class="modal-overlay" id="modal-add-admin">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal('add-admin')">✕</div>
+    <div class="modal-title">Invite Admin</div>
+    <div class="modal-sub">Send an invite to a new admin user</div>
+    <div class="field"><label>Full Name</label><input type="text" placeholder="Dr. Ravi Kumar"/></div>
+    <div class="field"><label>Email</label><input type="email" placeholder="ravi@skillsphere.ai"/></div>
+    <div class="field">
+      <label>Role</label>
+      <select><option>Admin</option><option>Moderator</option><option>Analyst</option></select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('add-admin')">Cancel</button>
+      <button class="btn btn-primary" onclick="showToast('success','Invite Sent','Admin invitation emailed');closeModal('add-admin')">Send Invite</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="t-icon">✅</span>
+  <div>
+    <div class="toast-title" id="t-title"></div>
+    <div class="toast-msg" id="t-msg"></div>
+  </div>
+</div>
+
+<script>
+/* ═══ DATA ═══ */
+const STUDENTS = [
+  {id:'SS001',name:'Priya Sharma',email:'priya@iitm.ac.in',college:'IIT Madras',domain:'Full Stack Dev',score:98.4,status:'Active',plan:'Pro',joined:'Jun 20'},
+  {id:'SS002',name:'Arjun Mehta',email:'arjun@nit.ac.in',college:'NIT Trichy',domain:'Data Science',score:96.1,status:'Active',plan:'Pro',joined:'Jun 21'},
+  {id:'SS003',name:'Keerthana V.',email:'kv@annauniv.edu',college:'Anna University',domain:'UX Design',score:94.7,status:'Active',plan:'Pro',joined:'Jun 21'},
+  {id:'SS004',name:'Rohit Kumar',email:'rohit@vit.ac.in',college:'VIT Vellore',domain:'ML Engineer',score:92.3,status:'Active',plan:'Starter',joined:'Jun 22'},
+  {id:'SS005',name:'Aisha Begum',email:'aisha@osmania.ac.in',college:'Osmania Univ',domain:'Product Mgmt',score:90.8,status:'Active',plan:'Pro',joined:'Jun 22'},
+  {id:'SS006',name:'Karthik R.',email:'karthik@sastra.edu',college:'SASTRA Univ',domain:'Computer Science',score:88.2,status:'Active',plan:'Starter',joined:'Jun 23'},
+  {id:'SS007',name:'Divya Nair',email:'divya@cusat.ac.in',college:'CUSAT Kerala',domain:'Data Science',score:85.6,status:'Inactive',plan:'Starter',joined:'Jun 23'},
+  {id:'SS008',name:'Santhosh P.',email:'santhosh@psg.edu',college:'PSG Tech',domain:'Electronics',score:83.1,status:'Active',plan:'Pro',joined:'Jun 24'},
+  {id:'SS009',name:'Meena L.',email:'meena@bitsblr.in',college:'BITS Pilani',domain:'ML Engineer',score:81.4,status:'Active',plan:'Institution',joined:'Jun 24'},
+  {id:'SS010',name:'Vijay S.',email:'vijay@srm.edu.in',college:'SRM Univ',domain:'Management',score:78.9,status:'Pending',plan:'Starter',joined:'Jun 25'},
+];
+
+const QUESTIONS = [
+  {id:'Q001',text:'Which data structure uses LIFO order?',domain:'CS',difficulty:'Easy',type:'AI',status:'Active'},
+  {id:'Q002',text:'What is the time complexity of binary search?',domain:'CS',difficulty:'Medium',type:'AI',status:'Active'},
+  {id:'Q003',text:'Explain the difference between supervised and unsupervised learning.',domain:'DS',difficulty:'Hard',type:'Manual',status:'Active'},
+  {id:'Q004',text:'A train travels 60 km in 45 minutes. What is its speed in km/h?',domain:'HR',difficulty:'Easy',type:'AI',status:'Active'},
+  {id:'Q005',text:'Which SQL clause is used to filter grouped results?',domain:'CS',difficulty:'Medium',type:'AI',status:'Active'},
+  {id:'Q006',text:'What does the "p" in p-value represent in statistics?',domain:'DS',difficulty:'Hard',type:'Manual',status:'Draft'},
+];
+
+const CERTS = [
+  {id:'SS-2026-98401',name:'Priya Sharma',domain:'Full Stack Dev',score:98.4,grade:'A+',issued:'Jun 20, 2026',type:'Elite'},
+  {id:'SS-2026-96104',name:'Arjun Mehta',domain:'Data Science',score:96.1,grade:'A+',issued:'Jun 21, 2026',type:'Elite'},
+  {id:'SS-2026-94712',name:'Keerthana V.',domain:'UX Design',score:94.7,grade:'A+',issued:'Jun 21, 2026',type:'Pro'},
+  {id:'SS-2026-92301',name:'Rohit Kumar',domain:'ML Engineer',score:92.3,grade:'A',issued:'Jun 22, 2026',type:'Pro'},
+  {id:'SS-2026-90801',name:'Aisha Begum',domain:'Product Mgmt',score:90.8,grade:'A',issued:'Jun 22, 2026',type:'Core'},
+];
+
+const ACTIVITY = [
+  {icon:'📝',bg:'rgba(124,92,252,0.1)',bc:'rgba(124,92,252,0.25)',text:'<strong>Priya Sharma</strong> completed Data Science assessment — Score: 98.4',time:'2 min ago'},
+  {icon:'🏅',bg:'rgba(0,229,195,0.1)',bc:'rgba(0,229,195,0.25)',text:'Certificate issued to <strong>Arjun Mehta</strong> for Full Stack Dev',time:'8 min ago'},
+  {icon:'👤',bg:'rgba(255,209,102,0.1)',bc:'rgba(255,209,102,0.25)',text:'New student <strong>Vijay S.</strong> registered from SRM University',time:'15 min ago'},
+  {icon:'⚠️',bg:'rgba(255,107,107,0.1)',bc:'rgba(255,107,107,0.25)',text:'Assessment flagged for <strong>Divya Nair</strong> — unusual score pattern',time:'32 min ago'},
+  {icon:'🤖',bg:'rgba(124,92,252,0.1)',bc:'rgba(124,92,252,0.25)',text:'AI generated <strong>5 new questions</strong> for HR Aptitude bank',time:'1 hr ago'},
+];
+
+const ASSESSMENTS = [
+  {student:'Priya Sharma',domain:'Data Science',score:98.4,duration:'22 min',status:'Completed',date:'Jun 20'},
+  {student:'Arjun Mehta',domain:'Full Stack Dev',score:96.1,duration:'28 min',status:'Completed',date:'Jun 21'},
+  {student:'Rohit Kumar',domain:'ML Engineer',score:92.3,duration:'35 min',status:'Completed',date:'Jun 22'},
+  {student:'Divya Nair',domain:'Data Science',score:71.0,duration:'18 min',status:'Flagged',date:'Jun 23'},
+  {student:'Vijay S.',domain:'Management',score:null,duration:'—',status:'In Progress',date:'Jun 25'},
+];
+
+const CAREERS = [
+  {title:'Full Stack Developer',domain:'Computer Science',salary:'₹8–18 LPA',skills:'React, Node.js, SQL',demand:'High'},
+  {title:'Data Analyst',domain:'Data Science',salary:'₹6–14 LPA',skills:'Python, Excel, Tableau',demand:'High'},
+  {title:'ML Engineer',domain:'AI / ML',salary:'₹12–30 LPA',skills:'TensorFlow, Python, Cloud',demand:'Very High'},
+  {title:'UX Designer',domain:'Design',salary:'₹7–16 LPA',skills:'Figma, Research, Prototyping',demand:'Medium'},
+  {title:'Product Manager',domain:'Management',salary:'₹15–35 LPA',skills:'Roadmapping, Agile, Data',demand:'High'},
+];
+
+/* ═══ VIEW SWITCHER ═══ */
+let activeItem = document.querySelector('.sb-item.active');
+function switchView(name, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+
+  if (activeItem) activeItem.classList.remove('active');
+  if (el) { el.classList.add('active'); activeItem = el; }
+  else {
+    document.querySelectorAll('.sb-item').forEach(i => {
+      if (i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + name + "'")) {
+        i.classList.add('active'); activeItem = i;
+      }
+    });
+  }
+
+  const titles = {dashboard:'Dashboard',users:'Students',assessments:'Assessments',
+    questions:'Question Bank',certificates:'Certificates',leaderboard:'Leaderboard',
+    careers:'Career Paths',reports:'Reports',settings:'Settings'};
+  document.getElementById('page-title').textContent = titles[name] || name;
+  document.getElementById('breadcrumb').textContent = 'Admin / ' + (titles[name] || name);
+  renderView(name);
+}
+
+function renderView(name) {
+  if (name === 'users')        renderUsers(STUDENTS);
+  if (name === 'assessments')  renderAssessments();
+  if (name === 'questions')    renderQuestions('all');
+  if (name === 'certificates') renderCerts();
+  if (name === 'leaderboard')  renderLeaderboard();
+  if (name === 'careers')      renderCareers();
+  if (name === 'reports')      renderReportCharts();
+}
+
+/* ═══ RENDER DASHBOARD ═══ */
+function renderDashboard() {
+  renderActivityChart();
+  renderActivityFeed();
+  renderDomainBars();
+  renderCareerRings();
+  renderRecentTable();
+}
+
+function renderActivityChart() {
+  const data = [
+    {label:'Mon',assess:280,cert:48},
+    {label:'Tue',assess:340,cert:62},
+    {label:'Wed',assess:420,cert:71},
+    {label:'Thu',assess:390,cert:55},
+    {label:'Fri',assess:510,cert:88},
+    {label:'Sat',assess:320,cert:42},
+    {label:'Sun',assess:190,cert:30},
+  ];
+  const max = Math.max(...data.map(d=>d.assess));
+  const el = document.getElementById('activity-chart');
+  if (!el) return;
+  el.innerHTML = data.map(d => `
+    <div class="chart-bar-col">
+      <div class="chart-bar bar-accent2" data-val="${d.cert} certs"
+        style="height:${(d.cert/max*100)}%;max-height:40%"></div>
+      <div class="chart-bar bar-primary" data-val="${d.assess} tests"
+        style="height:${(d.assess/max*100)}%"></div>
+      <div class="chart-x-label">${d.label}</div>
+    </div>
+  `).join('');
+}
+
+function renderActivityFeed() {
+  const el = document.getElementById('activity-feed');
+  if (!el) return;
+  el.innerHTML = ACTIVITY.map(a => `
+    <div class="activity-item">
+      <div class="act-icon" style="background:${a.bg};border-color:${a.bc}">${a.icon}</div>
+      <div class="act-body">
+        <div class="act-text">${a.text}</div>
+        <div class="act-time">${a.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderDomainBars() {
+  const el = document.getElementById('domain-bars');
+  if (!el) return;
+  const domains = [
+    {name:'Computer Science',pct:38,color:'var(--accent)'},
+    {name:'Data Science',pct:24,color:'var(--a2)'},
+    {name:'UX / Design',pct:14,color:'var(--gold)'},
+    {name:'Management',pct:12,color:'var(--warn)'},
+    {name:'ML / AI',pct:12,color:'#A07CFF'},
+  ];
+  el.innerHTML = domains.map(d => `
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+        <span style="font-size:0.78rem;color:var(--text)">${d.name}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted)">${d.pct}%</span>
+      </div>
+      <div class="score-track" style="height:6px">
+        <div class="score-fill" style="width:${d.pct}%;background:${d.color}"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCareerRings() {
+  const el = document.getElementById('career-rings');
+  if (!el) return;
+  const careers = [
+    {label:'Dev',pct:91,color:'#7C5CFC'},
+    {label:'Data',pct:87,color:'#00E5C3'},
+    {label:'ML',pct:72,color:'#FFD166'},
+  ];
+  el.innerHTML = careers.map(c => {
+    const r = 30; const circ = 2*Math.PI*r;
+    const offset = circ - (c.pct/100)*circ;
+    return `
+      <div class="ring-item">
+        <svg class="ring-svg" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="${r}" fill="none" stroke="var(--panel)" stroke-width="8"/>
+          <circle cx="40" cy="40" r="${r}" fill="none" stroke="${c.color}" stroke-width="8"
+            stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
+            stroke-linecap="round" transform="rotate(-90 40 40)"/>
+          <text x="40" y="45" text-anchor="middle" font-family="Syne,sans-serif"
+            font-weight="800" font-size="13" fill="#E8E8FF">${c.pct}%</text>
+        </svg>
+        <div class="ring-val">${c.label}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderRecentTable() {
+  const el = document.getElementById('recent-table');
+  if (!el) return;
+  el.innerHTML = `
+    <thead>
+      <tr>
+        <th>Student</th><th>College</th><th>Domain</th>
+        <th>Score</th><th>Status</th><th>Plan</th><th>Joined</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${STUDENTS.slice(0,5).map(s => studentRow(s)).join('')}
+    </tbody>`;
+}
+
+/* ═══ STUDENTS ═══ */
+let filteredStudents = [...STUDENTS];
+function renderUsers(list) {
+  const el = document.getElementById('users-table');
+  if (!el) return;
+  document.getElementById('user-count-label').textContent = `${list.length} students registered`;
+  document.getElementById('pagination-info').textContent = `Showing 1–${Math.min(10,list.length)} of ${list.length}`;
+  el.innerHTML = `
+    <thead>
+      <tr>
+        <th>ID</th><th>Student</th><th>College</th><th>Domain</th>
+        <th>Score</th><th>Status</th><th>Plan</th><th>Joined</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>${list.map(s => `
+      <tr>
+        <td><span class="badge badge-gray">${s.id}</span></td>
+        <td>${studentCell(s)}</td>
+        <td style="color:var(--muted);font-size:0.78rem">${s.college}</td>
+        <td><span class="badge badge-purple">${s.domain}</span></td>
+        <td>${scoreMini(s.score)}</td>
+        <td>${statusBadge(s.status)}</td>
+        <td>${planBadge(s.plan)}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted)">${s.joined}</td>
+        <td>${studentActions(s)}</td>
+      </tr>`).join('')}
+    </tbody>`;
+}
+function filterUsers(q) {
+  const f = q.toLowerCase();
+  filteredStudents = STUDENTS.filter(s =>
+    s.name.toLowerCase().includes(f) ||
+    s.email.toLowerCase().includes(f) ||
+    s.college.toLowerCase().includes(f) ||
+    s.domain.toLowerCase().includes(f)
+  );
+  renderUsers(filteredStudents);
+}
+function studentRow(s) {
+  return `<tr>
+    <td>${studentCell(s)}</td>
+    <td style="font-size:0.78rem;color:var(--muted)">${s.college}</td>
+    <td><span class="badge badge-purple">${s.domain}</span></td>
+    <td>${scoreMini(s.score)}</td>
+    <td>${statusBadge(s.status)}</td>
+    <td>${planBadge(s.plan)}</td>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted)">${s.joined}</td>
+    <td>${studentActions(s)}</td>
+  </tr>`;
+}
+function studentCell(s) {
+  const colors=['#7C5CFC','#00E5C3','#FFD166','#FF6B6B','#A07CFF'];
+  const c=colors[s.name.charCodeAt(0)%colors.length];
+  return `<div class="user-cell">
+    <div class="user-av" style="background:${c}">${s.name.charAt(0)}</div>
+    <div><div class="user-name">${s.name}</div><div class="user-email">${s.email}</div></div>
+  </div>`;
+}
+function studentActions(s) {
+  return `<div style="display:flex;gap:6px">
+    <button class="btn btn-ghost btn-xs" onclick="showToast('info','Viewing','Opening ${s.name}&apos;s profile')">View</button>
+    <button class="btn btn-danger btn-xs" onclick="showToast('info','Removed','${s.name} removed')">Remove</button>
+  </div>`;
+}
+function scoreMini(score) {
+  if (!score) return `<span style="color:var(--muted);font-size:0.78rem">—</span>`;
+  const color = score>=90?'var(--a2)':score>=75?'var(--accent)':'var(--warn)';
+  return `<div class="score-mini">
+    <div class="score-track"><div class="score-fill" style="width:${score}%;background:${color}"></div></div>
+    <span class="score-num">${score}</span>
+  </div>`;
+}
+function statusBadge(s) {
+  const m={Active:'badge-green',Inactive:'badge-gray',Pending:'badge-gold',Flagged:'badge-red'};
+  return `<span class="badge ${m[s]||'badge-gray'}">${s}</span>`;
+}
+function planBadge(p) {
+  const m={Pro:'badge-purple',Institution:'badge-green',Starter:'badge-gray'};
+  return `<span class="badge ${m[p]||'badge-gray'}">${p}</span>`;
+}
+
+/* ═══ ASSESSMENTS ═══ */
+function renderAssessments() {
+  const el = document.getElementById('assessments-table');
+  if (!el) return;
+  el.innerHTML = `
+    <thead><tr>
+      <th>Student</th><th>Domain</th><th>Score</th>
+      <th>Duration</th><th>Status</th><th>Date</th><th>Actions</th>
+    </tr></thead>
+    <tbody>${ASSESSMENTS.map(a=>`<tr>
+      <td style="font-weight:600;color:var(--bright)">${a.student}</td>
+      <td><span class="badge badge-purple">${a.domain}</span></td>
+      <td>${scoreMini(a.score)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted)">${a.duration}</td>
+      <td>${statusBadge(a.status)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted)">${a.date}</td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-xs" onclick="showToast('info','Viewing report','Loading assessment report…')">Report</button>
+        <button class="btn btn-danger btn-xs" onclick="showToast('info','Flagged','Assessment flagged for review')">Flag</button>
+      </div></td>
+    </tr>`).join('')}
+    </tbody>`;
+}
+
+/* ═══ QUESTIONS ═══ */
+function renderQuestions(domain) {
+  const list = domain==='all' ? QUESTIONS : QUESTIONS.filter(q=>q.domain===domain);
+  const el = document.getElementById('questions-list');
+  if (!el) return;
+  el.innerHTML = list.map(q=>`
+    <div class="q-row">
+      <div class="q-num">${q.id}</div>
+      <div class="q-content">
+        <div class="q-text-preview">${q.text}</div>
+        <div class="q-meta-row">
+          <span class="badge badge-purple">${q.domain}</span>
+          <span class="badge ${q.difficulty==='Easy'?'badge-green':q.difficulty==='Medium'?'badge-gold':'badge-red'}">${q.difficulty}</span>
+          <span class="badge ${q.type==='AI'?'badge-green':'badge-gray'}">${q.type==='AI'?'🤖 AI':'✍ Manual'}</span>
+          <span class="badge ${q.status==='Active'?'badge-green':'badge-gray'}">${q.status}</span>
+        </div>
+      </div>
+      <div class="q-actions">
+        <button class="btn btn-ghost btn-xs" onclick="showToast('info','Editing','Opening question editor…')">Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="showToast('info','Deleted','Question removed from bank')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+function filterQs(domain, btn) {
+  document.querySelectorAll('.tab-nav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderQuestions(domain);
+}
+function generateAIQuestion() {
+  showToast('success','AI Generating…','New question added to bank in 3 seconds');
+  setTimeout(()=>{
+    QUESTIONS.push({
+      id:`Q00${QUESTIONS.length+1}`,
+      text:'What is the purpose of a foreign key in a relational database?',
+      domain:'CS',difficulty:'Medium',type:'AI',status:'Active'
+    });
+    renderQuestions('all');
+    document.querySelector('.tab-nav-btn').click();
+  },3000);
+}
+
+/* ═══ CERTIFICATES ═══ */
+function renderCerts() {
+  const el = document.getElementById('cert-table');
+  if (!el) return;
+  el.innerHTML = `
+    <thead><tr>
+      <th>Cert ID</th><th>Student</th><th>Domain</th>
+      <th>Score</th><th>Grade</th><th>Type</th><th>Issued</th><th>Actions</th>
+    </tr></thead>
+    <tbody>${CERTS.map(c=>`<tr>
+      <td><span class="badge badge-gray" style="font-size:0.65rem">${c.id}</span></td>
+      <td style="font-weight:600;color:var(--bright)">${c.name}</td>
+      <td><span class="badge badge-purple">${c.domain}</span></td>
+      <td>${scoreMini(c.score)}</td>
+      <td><span class="badge badge-green">${c.grade}</span></td>
+      <td><span class="badge ${c.type==='Elite'?'badge-gold':c.type==='Pro'?'badge-purple':'badge-green'}">${c.type}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted)">${c.issued}</td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-xs" onclick="showToast('success','Downloading','${c.id}.pdf ready')">Download</button>
+        <button class="btn btn-danger btn-xs" onclick="showToast('info','Revoked','Certificate revoked')">Revoke</button>
+      </div></td>
+    </tr>`).join('')}
+    </tbody>`;
+}
+
+/* ═══ LEADERBOARD ═══ */
+function renderLeaderboard() {
+  const el = document.getElementById('lb-table');
+  if (!el) return;
+  const medals = ['🥇','🥈','🥉'];
+  el.innerHTML = `
+    <thead><tr>
+      <th>Rank</th><th>Student</th><th>College</th>
+      <th>Domain</th><th>Score</th><th>Badge</th>
+    </tr></thead>
+    <tbody>${STUDENTS.sort((a,b)=>b.score-a.score).map((s,i)=>`<tr>
+      <td style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:${i===0?'var(--gold)':i===1?'#A0A0C0':i===2?'#CD7F32':'var(--muted)'}">
+        ${medals[i]||i+1}
+      </td>
+      <td>${studentCell(s)}</td>
+      <td style="font-size:0.78rem;color:var(--muted)">${s.college}</td>
+      <td><span class="badge badge-purple">${s.domain}</span></td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-weight:600;color:${s.score>=90?'var(--a2)':s.score>=75?'var(--accent)':'var(--muted)'}">${s.score}</span></td>
+      <td><span class="badge ${s.score>=90?'badge-gold':s.score>=75?'badge-purple':'badge-green'}">${s.score>=90?'⭐ Elite':s.score>=75?'✦ Pro':'● Core'}</span></td>
+    </tr>`).join('')}
+    </tbody>`;
+}
+
+/* ═══ CAREER PATHS ═══ */
+function renderCareers() {
+  const el = document.getElementById('careers-table');
+  if (!el) return;
+  el.innerHTML = `
+    <thead><tr><th>Career</th><th>Domain</th><th>Salary</th><th>Demand</th><th>Key Skills</th><th>Actions</th></tr></thead>
+    <tbody>${CAREERS.map(c=>`<tr>
+      <td style="font-weight:600;color:var(--bright)">${c.title}</td>
+      <td><span class="badge badge-purple">${c.domain}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--a2)">${c.salary}</td>
+      <td><span class="badge ${c.demand==='Very High'?'badge-green':c.demand==='High'?'badge-purple':'badge-gold'}">${c.demand}</span></td>
+      <td style="font-size:0.75rem;color:var(--muted)">${c.skills}</td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-xs" onclick="openModal('add-career')">Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="showToast('info','Removed','Career path removed')">Remove</button>
+      </div></td>
+    </tr>`).join('')}
+    </tbody>`;
+}
+
+/* ═══ REPORT CHARTS ═══ */
+function renderReportCharts() {
+  const trend = document.getElementById('trend-chart');
+  if (trend) {
+    const d = [{l:'W1',v:68},{l:'W2',v:72},{l:'W3',v:75},{l:'W4',v:82},{l:'W5',v:79},{l:'W6',v:85}];
+    const max = Math.max(...d.map(x=>x.v));
+    trend.innerHTML = d.map(x=>`
+      <div class="chart-bar-col">
+        <div class="chart-bar bar-primary" data-val="Avg ${x.v}" style="height:${(x.v/max)*100}%"></div>
+        <div class="chart-x-label">${x.l}</div>
+      </div>`).join('');
+  }
+  const college = document.getElementById('college-bars');
+  if (college) {
+    const d = [
+      {name:'IIT Madras',pct:92},{name:'NIT Trichy',pct:78},
+      {name:'Anna Univ',pct:65},{name:'VIT Vellore',pct:58},{name:'BITS Pilani',pct:71},
+    ];
+    college.innerHTML = d.map(x=>`
+      <div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:0.78rem;color:var(--text)">${x.name}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted)">${x.pct}%</span>
+        </div>
+        <div class="score-track" style="height:5px">
+          <div class="score-fill" style="width:${x.pct}%;background:var(--accent)"></div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+/* ═══ MODALS ═══ */
+function openModal(name) {
+  document.getElementById('modal-' + name).classList.add('open');
+}
+function closeModal(name) {
+  document.getElementById('modal-' + name).classList.remove('open');
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+/* ═══ ACTIONS ═══ */
+function saveQuestion() {
+  closeModal('add-question');
+  showToast('success','Question Saved','Added to the question bank');
+}
+function saveUser() {
+  closeModal('add-user');
+  showToast('success','Student Added','Account created and welcome email sent');
+}
+function saveCareer() {
+  closeModal('add-career');
+  showToast('success','Career Path Saved','Available for matching immediately');
+}
+function issueCerts() {
+  closeModal('bulk-cert');
+  showToast('success','Certificates Issued','1,240 certificates generated and emailed');
+}
+function globalSearch(val) {
+  if (!val) return;
+  showToast('info','Searching…',`Results for "${val}"`);
+}
+
+/* ═══ TOAST ═══ */
+const ICONS = {success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};
+function showToast(type, title, msg) {
+  document.getElementById('t-icon').textContent = ICONS[type] || '✅';
+  document.getElementById('t-title').textContent = title;
+  document.getElementById('t-msg').textContent = msg;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+/* ═══ INIT ═══ */
+renderDashboard();
+</script>
+</body>
+</html>
