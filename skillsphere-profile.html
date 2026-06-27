@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillSphere AI — My Profile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#0A0A12;--deep:#0F0F1E;--panel:#141428;
+  --card:#1A1A32;--border:#252545;--muted:#4A4A72;
+  --text:#C8C8E8;--bright:#E8E8FF;
+  --accent:#7C5CFC;--a2:#00E5C3;--warn:#FF6B6B;--gold:#FFD166;
+  --glow:rgba(124,92,252,0.22);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--ink);color:var(--text);min-height:100vh}
+
+/* ── NAV ── */
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:64px;
+  background:rgba(10,10,18,.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.brand{display:flex;align-items:center;gap:9px;font-family:'Syne',sans-serif;
+  font-weight:800;font-size:1.2rem;color:var(--bright);text-decoration:none}
+.brand span{color:var(--accent)}
+.brand-dot{width:8px;height:8px;border-radius:50%;background:var(--a2);
+  box-shadow:0 0 10px var(--a2);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.nav-links{display:flex;align-items:center;gap:4px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.875rem;
+  padding:6px 14px;border-radius:6px;transition:all .2s}
+.nav-links a:hover{color:var(--bright);background:var(--panel)}
+.nav-links a.active{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:10px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;
+  border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;
+  border:none;font-family:'Inter',sans-serif;transition:all .2s;text-decoration:none}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 0 16px var(--glow)}
+.btn-primary:hover{background:#6A4AEA;transform:translateY(-1px)}
+.btn-ghost{background:var(--panel);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--bright)}
+.btn-a2{background:var(--a2);color:var(--ink);font-weight:700}
+.btn-a2:hover{opacity:.9}
+.btn-danger{background:rgba(255,107,107,.1);color:var(--warn);border:1px solid rgba(255,107,107,.2)}
+.btn-danger:hover{background:rgba(255,107,107,.18)}
+.btn-sm{padding:5px 13px;font-size:.78rem}
+.btn-xs{padding:3px 10px;font-size:.72rem}
+
+/* ── LAYOUT ── */
+.page{max-width:1100px;margin:0 auto;padding:40px 32px}
+.grid-main{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start}
+
+/* ── PROFILE CARD ── */
+.profile-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;overflow:hidden;position:sticky;top:88px;
+}
+.profile-banner{
+  height:90px;position:relative;
+  background:linear-gradient(135deg,#1a0a40,#0a2a2a);
+  overflow:hidden;
+}
+.banner-glow{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 80% at 30% 60%,rgba(124,92,252,.4) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 70% at 80% 30%,rgba(0,229,195,.25) 0%,transparent 55%);
+}
+.banner-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(37,37,69,.3) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(37,37,69,.3) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.avatar-wrap{
+  position:absolute;bottom:-44px;left:24px;
+}
+.avatar{
+  width:88px;height:88px;border-radius:20px;
+  background:linear-gradient(135deg,var(--accent),var(--a2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;font-weight:800;color:#fff;
+  border:3px solid var(--card);
+  font-family:'Syne',sans-serif;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .2s;
+}
+.avatar:hover{transform:scale(1.04)}
+.avatar-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.5);
+  display:none;align-items:center;justify-content:center;
+  font-size:1.4rem;
+}
+.avatar:hover .avatar-overlay{display:flex}
+.online-dot{
+  position:absolute;bottom:6px;right:6px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--a2);border:2px solid var(--card);
+  box-shadow:0 0 8px var(--a2);
+  animation:pulse 2s ease-in-out infinite;
+}
+.edit-avatar-btn{
+  position:absolute;bottom:-44px;right:24px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;padding:5px 12px;font-size:.75rem;
+  color:var(--text);cursor:pointer;font-family:'Inter',sans-serif;
+  transition:all .2s;
+}
+.edit-avatar-btn:hover{border-color:var(--accent);color:var(--bright)}
+
+.profile-info{padding:56px 24px 24px}
+.p-name{font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.4rem;color:var(--bright);margin-bottom:3px}
+.p-handle{font-family:'JetBrains Mono',monospace;font-size:.75rem;
+  color:var(--muted);margin-bottom:10px}
+.p-bio{font-size:.82rem;color:var(--text);line-height:1.6;margin-bottom:16px}
+
+.p-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.p-tag{font-size:.7rem;padding:3px 10px;border-radius:100px;
+  border:1px solid;font-family:'JetBrains Mono',monospace}
+.tag-domain{color:var(--accent);border-color:rgba(124,92,252,.3);background:rgba(124,92,252,.08)}
+.tag-college{color:var(--a2);border-color:rgba(0,229,195,.3);background:rgba(0,229,195,.07)}
+.tag-year{color:var(--gold);border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.07)}
+
+.p-location{display:flex;align-items:center;gap:6px;
+  font-size:.78rem;color:var(--muted);margin-bottom:18px}
+
+.p-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
+.ps{background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:12px 8px;text-align:center}
+.ps-val{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--bright)}
+.ps-lbl{font-size:.65rem;color:var(--muted);margin-top:2px}
+
+.p-actions{display:flex;flex-direction:column;gap:8px}
+.share-row{display:flex;gap:8px}
+.social-link{
+  width:34px;height:34px;background:var(--panel);border:1px solid var(--border);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;cursor:pointer;transition:all .2s;text-decoration:none;color:var(--muted);
+}
+.social-link:hover{border-color:var(--accent);color:var(--bright)}
+
+.divider-h{height:1px;background:var(--border);margin:20px 0}
+.p-achievements{display:flex;flex-direction:column;gap:8px}
+.ach-row{display:flex;align-items:center;gap:10px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px}
+.ach-icon{font-size:1.2rem}
+.ach-label{font-size:.78rem;font-weight:600;color:var(--bright)}
+.ach-sub{font-size:.68rem;color:var(--muted);margin-top:1px}
+.ach-score{font-family:'JetBrains Mono',monospace;font-size:.78rem;
+  font-weight:500;margin-left:auto}
+.score-a{color:var(--a2)}
+.score-g{color:var(--gold)}
+
+/* ── RIGHT COLUMN ── */
+.right-col{display:flex;flex-direction:column;gap:20px}
+
+/* ── PANEL ── */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:20px}
+.panel-hdr{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 24px;border-bottom:1px solid var(--border);
+}
+.panel-title{font-family:'Syne',sans-serif;font-weight:700;
+  font-size:.95rem;color:var(--bright)}
+.panel-sub{font-size:.72rem;color:var(--muted);margin-top:2px}
+.panel-body{padding:22px 24px}
+
+/* ── SCORE OVERVIEW ── */
+.score-overview{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center}
+.ring-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ring-svg{width:130px;height:130px}
+.ring-grade{font-family:'Syne',sans-serif;font-weight:800;
+  font-size:1.1rem;color:var(--bright)}
+.ring-lbl{font-size:.7rem;color:var(--muted)}
+.skill-overview-bars{flex:1;display:flex;flex-direction:column;gap:11px}
+.sob-row{display:flex;flex-direction:column;gap:5px}
+.sob-meta{display:flex;justify-content:space-between;align-items:center}
+.sob-name{font-size:.82rem;color:var(--text)}
+.sob-pct{font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:500}
+.sob-track{height:6px;background:var(--panel);border-radius:100px;overflow:hidden}
+.sob-fill{height:100%;border-radius:100px;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
+
+/* ── ACTIVITY CHART ── */
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;padding:8px 0}
+.cbar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
+.cbar{width:100%;border-radius:4px 4px 0 0;min-height:3px;cursor:pointer;
+  transition:opacity .2s;position:relative}
+.cbar:hover{opacity:.8}
+.cbar:hover::after{
+  content:attr(data-v);
+  position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+  font-size:.62rem;color:var(--bright);background:var(--panel);
+  border:1px solid var(--border);padding:2px 6px;border-radius:4px;
+  white-space:nowrap;font-family:'JetBrains Mono',monospace;
+}
+.cx-lbl{font-size:.62rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+/* ── ASSESSMENT HISTORY ── */
+.history-list{display:flex;flex-direction:column;gap:0}
+.hist-row{
+  display:grid;
+  grid-template-columns:1fr 100px 80px 80px 100px;
+  gap:12px;align-items:center;
+  padding:13px 24px;border-bottom:1px solid rgba(37,37,69,.5);
+  transition:background .15s;
+}
+.hist-row:last-child{border-bottom:none}
+.hist-row:hover{background:rgba(124,92,252,.04)}
+.hist-row.header{background:var(--panel);border-bottom:1px solid var(--border);
+  font-size:.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace;
+  text-transform:uppercase;letter-spacing:.05em}
+.hist-domain{display:flex;align-items:center;gap:10px}
+.hist-icon{font-size:1.1rem}
+.hist-name{font-size:.82rem;font-weight:600;color:var(--bright)}
+.hist-date{font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.hist-score-wrap{display:flex;flex-direction:column;gap:3px}
+.hist-score{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:500}
+.hist-bar{height:3px;background:var(--panel);border-radius:100px;overflow:hidden}
+.hist-bar-fill{height:100%;border-radius:100px}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;gap:4px;
+  font-size:.68rem;padding:3px 9px;border-radius:100px;
+  font-family:'JetBrains Mono',monospace;border:1px solid}
+.badge-green{color:var(--a2);border-color:rgba(0,229,195,.3);background:rgba(0,229,195,.07)}
+.badge-purple{color:var(--accent);border-color:rgba(124,92,252,.3);background:rgba(124,92,252,.08)}
+.badge-gold{color:var(--gold);border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.07)}
+.badge-gray{color:var(--muted);border-color:var(--border);background:var(--panel)}
+
+/* ── CERTIFICATES ── */
+.cert-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.cert-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:14px;padding:18px;cursor:pointer;
+  transition:all .25s;position:relative;overflow:hidden;
+}
+.cert-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.cert-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(124,92,252,.04),transparent);
+  pointer-events:none;
+}
+.cert-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.cert-icon-wrap{
+  width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--a2));
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+}
+.cert-type-badge{font-family:'JetBrains Mono',monospace;font-size:.62rem;
+  padding:2px 8px;border-radius:100px}
+.cert-title{font-family:'Syne',sans-serif;font-weight:700;
+  font-size:.88rem;color:var(--bright);margin-bottom:3px}
+.cert-domain{font-size:.72rem;color:var(--muted);margin-bottom:10px}
+.cert-score-row{display:flex;justify-content:space-between;align-items:center}
+.cert-score{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:500;color:var(--a2)}
+.cert-date{font-size:.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.cert-actions{display:flex;gap:6px;margin-top:12px}
+
+/* ── CAREER PANEL ── */
+.career-matches{display:flex;flex-direction:column;gap:10px}
+.cm-row{
+  display:flex;align-items:center;gap:14px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:14px;transition:border-color .2s;
+}
+.cm-row:hover{border-color:var(--a2)}
+.cm-emoji{font-size:1.5rem}
+.cm-info{flex:1}
+.cm-role{font-weight:600;color:var(--bright);font-size:.88rem;margin-bottom:3px}
+.cm-detail{font-size:.72rem;color:var(--muted)}
+.cm-right{text-align:right}
+.cm-pct{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700}
+.cm-pct-lbl{font-size:.65rem;color:var(--muted);margin-top:2px}
+.cm-bar-wrap{margin-top:8px;height:3px;background:var(--panel);border-radius:100px;overflow:hidden}
+.cm-bar{height:100%;border-radius:100px}
+
+/* ── EDIT PROFILE FORM ── */
+.edit-section{display:none}
+.edit-section.active{display:block}
+.view-section{display:block}
+.view-section.hidden{display:none}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.78rem;font-weight:600;color:var(--text)}
+.field input,.field select,.field textarea{
+  background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:9px 12px;color:var(--bright);font-family:'Inter',sans-serif;
+  font-size:.82rem;outline:none;transition:border-color .2s;width:100%;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,252,.1)}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted)}
+.field select option{background:var(--card)}
+.field textarea{resize:vertical;min-height:80px}
+.field-full{grid-column:1/-1}
+
+/* skill selector */
+.skill-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.skill-chip{
+  font-size:.72rem;padding:4px 12px;border-radius:100px;
+  border:1px solid var(--border);background:var(--panel);
+  color:var(--muted);cursor:pointer;transition:all .2s;
+  font-family:'JetBrains Mono',monospace;
+}
+.skill-chip.active{border-color:var(--accent);background:rgba(124,92,252,.1);color:var(--bright)}
+.skill-chip:hover:not(.active){border-color:var(--muted);color:var(--text)}
+
+/* ── LEADERBOARD POSITION ── */
+.lb-pos{
+  display:flex;align-items:center;gap:16px;
+  background:linear-gradient(135deg,rgba(124,92,252,.08),rgba(0,229,195,.06));
+  border:1px solid rgba(124,92,252,.2);border-radius:14px;padding:18px 20px;
+}
+.lb-medal{font-size:2.5rem}
+.lb-info{flex:1}
+.lb-rank{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;color:var(--bright)}
+.lb-rank span{font-size:.85rem;color:var(--muted);font-weight:400}
+.lb-desc{font-size:.78rem;color:var(--muted);margin-top:2px}
+.lb-percentile{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;
+  color:var(--a2);background:rgba(0,229,195,.08);
+  border:1px solid rgba(0,229,195,.2);padding:4px 12px;border-radius:100px;
+}
+
+/* ── STREAK ── */
+.streak-row{display:flex;gap:6px;flex-wrap:wrap}
+.streak-day{
+  width:28px;height:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.6rem;font-family:'JetBrains Mono',monospace;
+  border:1px solid;
+}
+.day-done{background:rgba(0,229,195,.12);border-color:rgba(0,229,195,.3);color:var(--a2)}
+.day-today{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 8px var(--glow)}
+.day-miss{background:rgba(255,107,107,.07);border-color:rgba(255,107,107,.2);color:var(--warn)}
+.day-empty{background:var(--panel);border-color:var(--border);color:var(--muted)}
+
+/* ── MODAL ── */
+.modal-ov{position:fixed;inset:0;z-index:200;background:rgba(10,10,18,.85);
+  backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
+.modal-ov.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:30px;width:100%;max-width:480px;position:relative;
+  animation:mIn .25s cubic-bezier(.4,0,.2,1);max-height:90vh;overflow-y:auto}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+.modal-x{position:absolute;top:14px;right:14px;width:28px;height:28px;
+  border-radius:7px;background:var(--panel);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:.75rem;color:var(--muted)}
+.modal-x:hover{color:var(--bright);border-color:var(--accent)}
+.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;
+  color:var(--bright);margin-bottom:5px}
+.modal-sub{font-size:.8rem;color:var(--muted);margin-bottom:22px}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;z-index:300;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:12px 18px;display:flex;align-items:center;gap:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1)}
+.toast.show{transform:translateY(0);opacity:1}
+.t-title{font-weight:600;color:var(--bright);font-size:.82rem}
+.t-msg{font-size:.72rem;color:var(--muted)}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+@media(max-width:900px){
+  .grid-main{grid-template-columns:1fr}
+  .profile-card{position:static}
+  .nav-links{display:none}
+  .page{padding:24px 16px}
+  .cert-grid{grid-template-columns:1fr}
+  .hist-row{grid-template-columns:1fr 80px 80px}
+  .hist-row>*:nth-child(4),.hist-row>*:nth-child(5){display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="skillsphere.html" class="brand">
+    <span class="brand-dot"></span>Skill<span>Sphere</span> AI
+  </a>
+  <ul class="nav-links">
+    <li><a href="skillsphere.html">Home</a></li>
+    <li><a href="skillsphere-assessment.html">Assessment</a></li>
+    <li><a href="skillsphere-admin.html">Dashboard</a></li>
+    <li><a href="#" class="active">Profile</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn btn-ghost btn-sm" onclick="openModal('settings')">⚙️ Settings</button>
+    <button class="btn btn-primary btn-sm" onclick="openModal('edit')">✏️ Edit Profile</button>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+  <div class="grid-main">
+
+    <!-- ════════ LEFT: PROFILE CARD ════════ -->
+    <div class="profile-card">
+      <div class="profile-banner">
+        <div class="banner-glow"></div>
+        <div class="banner-grid"></div>
+        <div class="avatar-wrap">
+          <div class="avatar" onclick="openModal('avatar')" id="main-avatar">
+            A
+            <div class="avatar-overlay">📷</div>
+            <div class="online-dot"></div>
+          </div>
+        </div>
+        <button class="edit-avatar-btn" onclick="openModal('avatar')">Change Photo</button>
+      </div>
+
+      <div class="profile-info">
+        <div class="p-name" id="p-name">Arjun Mehta</div>
+        <div class="p-handle" id="p-handle">@arjun.mehta · SS-2026-96104</div>
+        <div class="p-bio" id="p-bio">Final year CS student passionate about distributed systems and backend engineering. Building my career one skill at a time. 🚀</div>
+
+        <div class="p-tags">
+          <span class="p-tag tag-domain" id="p-domain">💻 Computer Science</span>
+          <span class="p-tag tag-college" id="p-college">🏛 NIT Trichy</span>
+          <span class="p-tag tag-year" id="p-year">📅 4th Year</span>
+        </div>
+
+        <div class="p-location">
+          <span>📍</span>
+          <span id="p-location">Chennai, Tamil Nadu</span>
+        </div>
+
+        <div class="p-stats">
+          <div class="ps">
+            <div class="ps-val" style="color:var(--a2)">96.1</div>
+            <div class="ps-lbl">Best Score</div>
+          </div>
+          <div class="ps">
+            <div class="ps-val" style="color:var(--accent)">12</div>
+            <div class="ps-lbl">Tests Taken</div>
+          </div>
+          <div class="ps">
+            <div class="ps-val" style="color:var(--gold)">#2</div>
+            <div class="ps-lbl">Global Rank</div>
+          </div>
+        </div>
+
+        <div class="p-actions">
+          <button class="btn btn-primary" style="width:100%;justify-content:center"
+            onclick="window.location.href='skillsphere-assessment.html'">
+            🚀 Take New Assessment
+          </button>
+          <div class="share-row">
+            <button class="btn btn-ghost" style="flex:1;justify-content:center"
+              onclick="copyLink()">🔗 Share Profile</button>
+            <a href="#" class="social-link" title="LinkedIn">in</a>
+            <a href="#" class="social-link" title="GitHub">🐙</a>
+            <a href="#" class="social-link" title="Twitter">𝕏</a>
+          </div>
+        </div>
+
+        <div class="divider-h"></div>
+
+        <div class="p-achievements">
+          <div style="font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:6px;
+            font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em">
+            Achievements
+          </div>
+          <div class="ach-row">
+            <span class="ach-icon">🥈</span>
+            <div><div class="ach-label">National Rank #2</div><div class="ach-sub">Data Science Domain</div></div>
+            <span class="ach-score score-a">Top 1%</span>
+          </div>
+          <div class="ach-row">
+            <span class="ach-icon">🔥</span>
+            <div><div class="ach-label">12-Day Streak</div><div class="ach-sub">Consistent learner</div></div>
+            <span class="ach-score score-g">Active</span>
+          </div>
+          <div class="ach-row">
+            <span class="ach-icon">⭐</span>
+            <div><div class="ach-label">Elite Scorer</div><div class="ach-sub">Score above 90 three times</div></div>
+            <span class="ach-score score-a">Earned</span>
+          </div>
+          <div class="ach-row">
+            <span class="ach-icon">🏅</span>
+            <div><div class="ach-label">3 Certificates</div><div class="ach-sub">Verified & shareable</div></div>
+            <span class="ach-score score-g">View →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ RIGHT COLUMN ════════ -->
+    <div class="right-col">
+
+      <!-- Leaderboard position -->
+      <div class="lb-pos">
+        <div class="lb-medal">🥈</div>
+        <div class="lb-info">
+          <div class="lb-rank">#2 <span>National Rank</span></div>
+          <div class="lb-desc">Data Science · NIT Trichy — you're just 2.3 points behind #1</div>
+        </div>
+        <span class="lb-percentile">Top 1% 🇮🇳</span>
+      </div>
+
+      <!-- Score Overview -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <div>
+            <div class="panel-title">Skill Score Overview</div>
+            <div class="panel-sub">Based on last 12 assessments</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="window.location.href='skillsphere-assessment.html'">Improve Score →</button>
+        </div>
+        <div class="panel-body">
+          <div class="score-overview">
+            <div class="ring-wrap">
+              <svg class="ring-svg" viewBox="0 0 130 130">
+                <circle cx="65" cy="65" r="52" fill="none" stroke="var(--panel)" stroke-width="11"/>
+                <circle cx="65" cy="65" r="52" fill="none" stroke="url(#rg1)"
+                  stroke-width="11" stroke-dasharray="326.7" stroke-dashoffset="65.3"
+                  stroke-linecap="round" transform="rotate(-90 65 65)"/>
+                <defs>
+                  <linearGradient id="rg1" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#7C5CFC"/>
+                    <stop offset="100%" stop-color="#00E5C3"/>
+                  </linearGradient>
+                </defs>
+                <text x="65" y="58" text-anchor="middle" font-family="Syne,sans-serif"
+                  font-weight="800" font-size="24" fill="#E8E8FF">80</text>
+                <text x="65" y="75" text-anchor="middle" font-family="Inter,sans-serif"
+                  font-size="9" fill="#4A4A72">avg score</text>
+              </svg>
+              <div class="ring-grade">A Grade</div>
+              <div class="ring-lbl">Overall</div>
+            </div>
+            <div class="skill-overview-bars" id="skill-bars">
+              <!-- rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity chart -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <div>
+            <div class="panel-title">Activity — Last 14 Days</div>
+            <div class="panel-sub">Assessments and practice sessions</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--muted)">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--accent)"></span>Assessments
+            </span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="chart-bars" id="act-chart"></div>
+          <!-- Streak -->
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+            <div style="font-size:.72rem;color:var(--muted);margin-bottom:10px;font-family:'JetBrains Mono',monospace">
+              🔥 12-Day Streak — Keep it going!
+            </div>
+            <div class="streak-row" id="streak-row"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assessment History -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <div>
+            <div class="panel-title">Assessment History</div>
+            <div class="panel-sub">12 assessments completed</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('info','Exporting…','history.csv downloading')">Export CSV</button>
+        </div>
+        <div class="hist-row header">
+          <div>Assessment</div>
+          <div>Score</div>
+          <div>Grade</div>
+          <div>Date</div>
+          <div>Certificate</div>
+        </div>
+        <div class="history-list" id="history-list"></div>
+      </div>
+
+      <!-- Certificates -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <div>
+            <div class="panel-title">My Certificates</div>
+            <div class="panel-sub">3 verified credentials earned</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="window.location.href='skillsphere-assessment.html'">Earn More →</button>
+        </div>
+        <div class="panel-body">
+          <div class="cert-grid" id="cert-grid"></div>
+        </div>
+      </div>
+
+      <!-- Career Matches -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <div>
+            <div class="panel-title">Career Matches</div>
+            <div class="panel-sub">Based on your skill fingerprint</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('info','Coming soon','Detailed roadmap launching next week')">Full Roadmap →</button>
+        </div>
+        <div class="panel-body">
+          <div class="career-matches" id="career-matches"></div>
+        </div>
+      </div>
+
+      <!-- Resume -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <div class="panel-title">Resume Analyzer</div>
+        </div>
+        <div class="panel-body">
+          <div id="resume-section">
+            <div style="border:2px dashed var(--border);border-radius:14px;
+              padding:36px;text-align:center;cursor:pointer;transition:border-color .2s"
+              onmouseenter="this.style.borderColor='var(--accent)'"
+              onmouseleave="this.style.borderColor='var(--border)'"
+              onclick="document.getElementById('resume-input').click()">
+              <div style="font-size:2rem;margin-bottom:10px">📄</div>
+              <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--bright);margin-bottom:6px">
+                Upload your resume
+              </div>
+              <div style="font-size:.78rem;color:var(--muted);margin-bottom:14px">
+                PDF or DOCX — AI will analyze it against your skill scores
+              </div>
+              <button class="btn btn-primary btn-sm">Choose File</button>
+              <input type="file" id="resume-input" accept=".pdf,.docx" style="display:none"
+                onchange="handleResume(this)"/>
+            </div>
+          </div>
+          <div id="resume-result" style="display:none">
+            <div style="display:flex;align-items:center;gap:12px;
+              background:rgba(0,229,195,.06);border:1px solid rgba(0,229,195,.2);
+              border-radius:12px;padding:14px 16px;margin-bottom:16px">
+              <span style="font-size:1.4rem">📄</span>
+              <div style="flex:1">
+                <div style="font-weight:600;color:var(--bright);font-size:.88rem" id="resume-fname">resume.pdf</div>
+                <div style="font-size:.72rem;color:var(--a2);margin-top:2px">✓ Analyzed by Claude AI</div>
+              </div>
+              <button class="btn btn-danger btn-xs" onclick="clearResume()">Remove</button>
+            </div>
+            <div id="resume-feedback" style="font-size:.82rem;color:var(--text);line-height:1.8;
+              background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /right-col -->
+  </div><!-- /grid-main -->
+</div><!-- /page -->
+
+<!-- ════ MODALS ════ -->
+
+<!-- Edit Profile -->
+<div class="modal-ov" id="modal-edit">
+  <div class="modal">
+    <div class="modal-x" onclick="closeModal('edit')">✕</div>
+    <div class="modal-title">Edit Profile</div>
+    <div class="modal-sub">Update your public profile information</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>First Name</label>
+        <input type="text" id="e-fname" value="Arjun"/>
+      </div>
+      <div class="field">
+        <label>Last Name</label>
+        <input type="text" id="e-lname" value="Mehta"/>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="e-email" value="arjun@nit.ac.in"/>
+      </div>
+      <div class="field">
+        <label>Phone</label>
+        <input type="tel" id="e-phone" placeholder="+91 99999 00000"/>
+      </div>
+      <div class="field field-full">
+        <label>Bio</label>
+        <textarea id="e-bio">Final year CS student passionate about distributed systems and backend engineering. Building my career one skill at a time. 🚀</textarea>
+      </div>
+      <div class="field">
+        <label>College / University</label>
+        <input type="text" id="e-college" value="NIT Trichy"/>
+      </div>
+      <div class="field">
+        <label>Location</label>
+        <input type="text" id="e-location" value="Chennai, Tamil Nadu"/>
+      </div>
+      <div class="field">
+        <label>Year of Study</label>
+        <select id="e-year">
+          <option>1st Year</option><option>2nd Year</option>
+          <option>3rd Year</option><option selected>4th Year</option><option>Alumni</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Primary Domain</label>
+        <select id="e-domain">
+          <option>Computer Science</option><option selected>Data Science</option>
+          <option>UX Design</option><option>Management</option>
+          <option>Electronics</option><option>AI / ML</option>
+        </select>
+      </div>
+      <div class="field field-full">
+        <label>Career Goal</label>
+        <input type="text" id="e-goal" value="Backend Engineer at a product startup" placeholder="e.g. Software Engineer at Google"/>
+      </div>
+      <div class="field field-full">
+        <label>Top Skills</label>
+        <div class="skill-chips" id="skill-chips">
+          <span class="skill-chip active" onclick="toggleChip(this)">Python</span>
+          <span class="skill-chip active" onclick="toggleChip(this)">SQL</span>
+          <span class="skill-chip active" onclick="toggleChip(this)">System Design</span>
+          <span class="skill-chip" onclick="toggleChip(this)">Machine Learning</span>
+          <span class="skill-chip" onclick="toggleChip(this)">React</span>
+          <span class="skill-chip" onclick="toggleChip(this)">Node.js</span>
+          <span class="skill-chip" onclick="toggleChip(this)">Docker</span>
+          <span class="skill-chip" onclick="toggleChip(this)">AWS</span>
+          <span class="skill-chip" onclick="toggleChip(this)">TensorFlow</span>
+          <span class="skill-chip" onclick="toggleChip(this)">Figma</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>LinkedIn URL</label>
+        <input type="url" placeholder="https://linkedin.com/in/…"/>
+      </div>
+      <div class="field">
+        <label>GitHub URL</label>
+        <input type="url" placeholder="https://github.com/…"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('edit')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Avatar Modal -->
+<div class="modal-ov" id="modal-avatar">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div class="modal-x" onclick="closeModal('avatar')">✕</div>
+    <div class="modal-title">Change Avatar</div>
+    <div class="modal-sub">Choose an emoji or upload a photo</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px">
+      <div onclick="setAvatar('🦁')" style="font-size:1.8rem;padding:10px;border-radius:10px;
+        background:var(--panel);border:1px solid var(--border);cursor:pointer;
+        transition:all .2s" onmouseenter="this.style.borderColor='var(--accent)'"
+        onmouseleave="this.style.borderColor='var(--border)'">🦁</div>
+      <div onclick="setAvatar('🦊')" style="font-size:1.8rem;padding:10px;border-radius:10px;
+        background:var(--panel);border:1px solid var(--border);cursor:pointer;
+        transition:all .2s" onmouseenter="this.style.borderColor='var(--accent)'"
+        onmouseleave="this.style.borderColor='var(--border)'">🦊</div>
+      <div onclick="setAvatar('🐯')" style="font-size:1.8rem;padding:10px;border-radius:10px;
+        background:var(--panel);border:1px solid var(--border);cursor:pointer;
+        transition:all .2s" onmouseenter="this.style.borderColor='var(--accent)'"
+        onmouseleave="this.style.borderColor='var(--border)'">🐯</div>
+      <div onclick="setAvatar('🦅')" style="font-size:1.8rem;padding:10px;border-radius:10px;
+        background:var(--panel);border:1px solid var(--border);cursor:pointer;
+        transition:all .2s" onmouseenter="this.style.borderColor='var(--accent)'"
+        onmouseleave="this.style.borderColor='var(--border)'">🦅</div>
+      <div onclick="setAvatar('🐉')" style="font-size:1.8rem;padding:10px;border-radius:10px;
+        background:var(--panel);border:1px solid var(--border);cursor:pointer;
+        transition:all .2s" onmouseenter="this.style.borderColor='var(--accent)'"
+        onmouseleave="this.style.borderColor='var(--border)'">🐉</div>
+      <div onclick="setAvatar('🚀')" style="font-size:1.8rem;padding:10px;border-radius:10px;
+        background:var(--panel);border:1px solid var(--border);cursor:pointer;
+        transition:all .2s" onmouseenter="this.style.borderColor='var(--accent)'"
+        onmouseleave="this.style.borderColor='var(--border)'">🚀</div>
+      <div onclick="setAvatar('⚡')" style="font-size:1.8rem;padding:10px;border-radius:10px;
+        background:var(--panel);border:1px solid var(--border);cursor:pointer;
+        transition:all .2s" onmouseenter="this.style.borderColor='var(--accent)'"
+        onmouseleave="this.style.borderColor='var(--border)'">⚡</div>
+      <div onclick="setAvatar('🎯')" style="font-size:1.8rem;padding:10px;border-radius:10px;
+        background:var(--panel);border:1px solid var(--border);cursor:pointer;
+        transition:all .2s" onmouseenter="this.style.borderColor='var(--accent)'"
+        onmouseleave="this.style.borderColor='var(--border)'">🎯</div>
+      <div onclick="setAvatar('🧠')" style="font-size:1.8rem;padding:10px;border-radius:10px;
+        background:var(--panel);border:1px solid var(--border);cursor:pointer;
+        transition:all .2s" onmouseenter="this.style.borderColor='var(--accent)'"
+        onmouseleave="this.style.borderColor='var(--border)'">🧠</div>
+      <div onclick="setAvatar('💎')" style="font-size:1.8rem;padding:10px;border-radius:10px;
+        background:var(--panel);border:1px solid var(--border);cursor:pointer;
+        transition:all .2s" onmouseenter="this.style.borderColor='var(--accent)'"
+        onmouseleave="this.style.borderColor='var(--border)'">💎</div>
+    </div>
+    <button class="btn btn-ghost" style="width:100%;justify-content:center"
+      onclick="closeModal('avatar')">Cancel</button>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-ov" id="modal-settings">
+  <div class="modal">
+    <div class="modal-x" onclick="closeModal('settings')">✕</div>
+    <div class="modal-title">Account Settings</div>
+    <div class="modal-sub">Manage your account preferences</div>
+
+    <!-- toggles -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;
+        padding:12px 14px;background:var(--panel);border:1px solid var(--border);border-radius:10px">
+        <div>
+          <div style="font-size:.85rem;font-weight:600;color:var(--bright)">Email Notifications</div>
+          <div style="font-size:.72rem;color:var(--muted)">New scores, certificates, leaderboard updates</div>
+        </div>
+        <label style="position:relative;display:inline-block;width:40px;height:22px;cursor:pointer">
+          <input type="checkbox" checked style="opacity:0;width:0;height:0" onchange="showToast('success','Saved','Notification preference updated')">
+          <span style="position:absolute;cursor:pointer;inset:0;background:var(--accent);
+            border-radius:100px;transition:.3s"></span>
+        </label>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;
+        padding:12px 14px;background:var(--panel);border:1px solid var(--border);border-radius:10px">
+        <div>
+          <div style="font-size:.85rem;font-weight:600;color:var(--bright)">Public Profile</div>
+          <div style="font-size:.72rem;color:var(--muted)">Allow others to view your profile and scores</div>
+        </div>
+        <label style="position:relative;display:inline-block;width:40px;height:22px;cursor:pointer">
+          <input type="checkbox" checked style="opacity:0;width:0;height:0" onchange="showToast('success','Saved','Privacy setting updated')">
+          <span style="position:absolute;cursor:pointer;inset:0;background:var(--accent);
+            border-radius:100px;transition:.3s"></span>
+        </label>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;
+        padding:12px 14px;background:var(--panel);border:1px solid var(--border);border-radius:10px">
+        <div>
+          <div style="font-size:.85rem;font-weight:600;color:var(--bright)">Weekly Progress Report</div>
+          <div style="font-size:.72rem;color:var(--muted)">Receive your skill progress every Monday</div>
+        </div>
+        <label style="position:relative;display:inline-block;width:40px;height:22px;cursor:pointer">
+          <input type="checkbox" style="opacity:0;width:0;height:0" onchange="showToast('success','Saved','Weekly report enabled')">
+          <span style="position:absolute;cursor:pointer;inset:0;background:var(--border);
+            border-radius:100px;transition:.3s"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:14px">
+      <label>Change Password</label>
+      <input type="password" placeholder="Current password"/>
+    </div>
+    <div class="field" style="margin-bottom:20px">
+      <input type="password" placeholder="New password"/>
+    </div>
+
+    <div style="padding-top:16px;border-top:1px solid var(--border)">
+      <button class="btn btn-danger" style="width:100%;justify-content:center"
+        onclick="showToast('info','Signed out','Redirecting to login…');closeModal('settings')">
+        Sign Out
+      </button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('settings')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span id="ti">✅</span>
+  <div><div class="t-title" id="tt"></div><div class="t-msg" id="tm"></div></div>
+</div>
+
+<script>
+/* ══ DATA ══ */
+const HISTORY = [
+  {domain:'Data Science',icon:'📊',score:96.1,grade:'A+',date:'Jun 21',cert:true,certType:'Elite'},
+  {domain:'Computer Science',icon:'💻',score:91.4,grade:'A',date:'Jun 18',cert:true,certType:'Pro'},
+  {domain:'AI / ML',icon:'🤖',score:88.2,grade:'A',date:'Jun 14',cert:true,certType:'Pro'},
+  {domain:'Data Science',icon:'📊',score:83.7,grade:'A',date:'Jun 10',cert:false,certType:null},
+  {domain:'System Design',icon:'🏗️',score:79.5,grade:'B+',date:'Jun 07',cert:false,certType:null},
+  {domain:'SQL & Databases',icon:'🗄️',score:95.0,grade:'A+',date:'Jun 04',cert:false,certType:null},
+  {domain:'Python',icon:'🐍',score:73.2,grade:'B+',date:'May 30',cert:false,certType:null},
+  {domain:'Algorithms',icon:'⚙️',score:68.5,grade:'B',date:'May 26',cert:false,certType:null},
+];
+
+const SKILLS = [
+  {name:'Data Analysis',pct:92,color:'var(--a2)'},
+  {name:'Problem Solving',pct:88,color:'var(--accent)'},
+  {name:'SQL & Databases',pct:95,color:'#A07CFF'},
+  {name:'Machine Learning',pct:74,color:'var(--gold)'},
+  {name:'System Design',pct:79,color:'#66D9E8'},
+  {name:'Communication',pct:82,color:'var(--warn)'},
+];
+
+const CERTS = [
+  {icon:'📊',title:'Data Science Mastery',domain:'Data Science',score:96.1,grade:'A+',date:'Jun 21, 2026',type:'Elite',id:'SS-2026-96104'},
+  {icon:'💻',title:'CS Fundamentals Pro',domain:'Computer Science',score:91.4,grade:'A',date:'Jun 18, 2026',type:'Pro',id:'SS-2026-91401'},
+  {icon:'🤖',title:'AI & ML Practitioner',domain:'AI / ML',score:88.2,grade:'A',date:'Jun 14, 2026',type:'Pro',id:'SS-2026-88201'},
+];
+
+const CAREERS = [
+  {emoji:'📊',role:'Data Scientist',detail:'High demand · ₹12–28 LPA · Strong match',pct:94,color:'var(--a2)'},
+  {emoji:'🔬',role:'ML Engineer',detail:'Growing fast · ₹15–35 LPA · Good fit',pct:87,color:'var(--accent)'},
+  {emoji:'🏗️',role:'Data Engineer',detail:'Infrastructure · ₹10–22 LPA · Solid match',pct:81,color:'#A07CFF'},
+  {emoji:'💼',role:'Product Analyst',detail:'Business insight · ₹9–18 LPA · Moderate',pct:68,color:'var(--gold)'},
+];
+
+const ACT_DATA = [
+  {l:'14',v:0},{l:'13',v:1},{l:'12',v:0},{l:'11',v:2},{l:'10',v:1},
+  {l:'9',v:0},{l:'8',v:1},{l:'7',v:3},{l:'6',v:1},{l:'5',v:0},
+  {l:'4',v:2},{l:'3',v:1},{l:'2',v:1},{l:'1',v:2},
+];
+
+/* ══ RENDER ══ */
+function renderSkillBars(){
+  document.getElementById('skill-bars').innerHTML=SKILLS.map(s=>`
+    <div class="sob-row">
+      <div class="sob-meta">
+        <span class="sob-name">${s.name}</span>
+        <span class="sob-pct" style="color:${s.color}">${s.pct}%</span>
+      </div>
+      <div class="sob-track">
+        <div class="sob-fill" style="width:0%;background:${s.color}" data-w="${s.pct}%"></div>
+      </div>
+    </div>`).join('');
+  setTimeout(()=>{
+    document.querySelectorAll('.sob-fill').forEach(b=>b.style.width=b.dataset.w);
+  },200);
+}
+
+function renderActivityChart(){
+  const max=Math.max(...ACT_DATA.map(d=>d.v),1);
+  document.getElementById('act-chart').innerHTML=ACT_DATA.map(d=>`
+    <div class="cbar-col">
+      <div class="cbar" data-v="${d.v} sessions"
+        style="height:${Math.max(d.v/max*100,4)}%;background:${d.v>0?'linear-gradient(to top,var(--accent),#A07CFF)':'var(--panel)'};
+        border:1px solid ${d.v>0?'rgba(124,92,252,.3)':'var(--border)'};border-radius:4px 4px 0 0"></div>
+      <div class="cx-lbl">${d.l}</div>
+    </div>`).join('');
+}
+
+function renderStreak(){
+  const days=['M','T','W','T','F','S','S','M','T','W','T','F','S','T'];
+  const done=[1,1,0,1,1,1,0,1,1,1,1,1,0];
+  document.getElementById('streak-row').innerHTML=done.map((d,i)=>`
+    <div class="streak-day ${i===done.length-1?'day-today':d?'day-done':'day-empty'}">
+      ${days[i]}
+    </div>`).join('');
+}
+
+function renderHistory(){
+  document.getElementById('history-list').innerHTML=HISTORY.map(h=>{
+    const col=h.score>=90?'var(--a2)':h.score>=75?'var(--accent)':'var(--warn)';
+    const certBadge=h.cert
+      ?`<span class="badge ${h.certType==='Elite'?'badge-gold':h.certType==='Pro'?'badge-purple':'badge-green'}">${h.certType}</span>`
+      :`<span class="badge badge-gray">—</span>`;
+    return`
+      <div class="hist-row">
+        <div class="hist-domain">
+          <span class="hist-icon">${h.icon}</span>
+          <div>
+            <div class="hist-name">${h.domain}</div>
+            <div class="hist-date">${h.date}</div>
+          </div>
+        </div>
+        <div class="hist-score-wrap">
+          <span class="hist-score" style="color:${col}">${h.score}</span>
+          <div class="hist-bar">
+            <div class="hist-bar-fill" style="width:${h.score}%;background:${col}"></div>
+          </div>
+        </div>
+        <div><span class="badge ${h.score>=90?'badge-green':h.score>=75?'badge-purple':'badge-gold'}">${h.grade}</span></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted)">${h.date}</div>
+        <div>${certBadge}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderCerts(){
+  document.getElementById('cert-grid').innerHTML=CERTS.map(c=>`
+    <div class="cert-card" onclick="downloadCert('${c.id}')">
+      <div class="cert-top">
+        <div class="cert-icon-wrap">${c.icon}</div>
+        <span class="cert-type-badge badge ${c.type==='Elite'?'badge-gold':c.type==='Pro'?'badge-purple':'badge-green'}">${c.type}</span>
+      </div>
+      <div class="cert-title">${c.title}</div>
+      <div class="cert-domain">${c.domain}</div>
+      <div class="cert-score-row">
+        <span class="cert-score">${c.score} · ${c.grade}</span>
+        <span class="cert-date">${c.date}</span>
+      </div>
+      <div class="cert-actions">
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();downloadCert('${c.id}')">⬇ Download</button>
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();shareLinkedIn('${c.title}')">in Share</button>
+        <button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();copyLink()">🔗 Copy</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderCareers(){
+  document.getElementById('career-matches').innerHTML=CAREERS.map(c=>`
+    <div class="cm-row">
+      <span class="cm-emoji">${c.emoji}</span>
+      <div class="cm-info">
+        <div class="cm-role">${c.role}</div>
+        <div class="cm-detail">${c.detail}</div>
+        <div class="cm-bar-wrap">
+          <div class="cm-bar" style="width:${c.pct}%;background:${c.color}"></div>
+        </div>
+      </div>
+      <div class="cm-right">
+        <div class="cm-pct" style="color:${c.color}">${c.pct}%</div>
+        <div class="cm-pct-lbl">match</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ══ ACTIONS ══ */
+function toggleChip(el){el.classList.toggle('active')}
+
+function saveProfile(){
+  const name=document.getElementById('e-fname').value+' '+document.getElementById('e-lname').value;
+  const bio=document.getElementById('e-bio').value;
+  const college=document.getElementById('e-college').value;
+  const loc=document.getElementById('e-location').value;
+  const year=document.getElementById('e-year').value;
+  const domain=document.getElementById('e-domain').value;
+  document.getElementById('p-name').textContent=name;
+  document.getElementById('p-bio').textContent=bio;
+  document.getElementById('p-college').textContent='🏛 '+college;
+  document.getElementById('p-location').textContent=loc;
+  document.getElementById('p-year').textContent='📅 '+year;
+  document.getElementById('p-domain').textContent='💻 '+domain;
+  const handle=name.toLowerCase().replace(' ','.');
+  document.getElementById('p-handle').textContent='@'+handle+' · SS-2026-96104';
+  // update avatar initial
+  document.getElementById('main-avatar').childNodes[0].textContent=name.charAt(0);
+  closeModal('edit');
+  showToast('success','Profile Updated','Your changes are live');
+}
+
+function saveSettings(){
+  closeModal('settings');
+  showToast('success','Settings Saved','All preferences updated');
+}
+
+function setAvatar(emoji){
+  const av=document.getElementById('main-avatar');
+  av.innerHTML=`${emoji}<div class="avatar-overlay">📷</div><div class="online-dot"></div>`;
+  av.style.fontSize='2rem';
+  closeModal('avatar');
+  showToast('success','Avatar Updated','Looking great!');
+}
+
+function downloadCert(id){
+  showToast('success','Downloading…','Certificate '+id+'.pdf ready');
+}
+function shareLinkedIn(title){
+  showToast('success','Sharing to LinkedIn','Opening LinkedIn share dialog…');
+}
+function copyLink(){
+  navigator.clipboard?.writeText('https://skillsphere.ai/profile/arjun.mehta').catch(()=>{});
+  showToast('success','Link Copied!','Profile link copied to clipboard');
+}
+
+function handleResume(input){
+  const file=input.files[0];
+  if(!file)return;
+  document.getElementById('resume-section').style.display='none';
+  document.getElementById('resume-result').style.display='block';
+  document.getElementById('resume-fname').textContent=file.name;
+  document.getElementById('resume-feedback').innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;color:var(--muted);font-size:.8rem">
+      <span>🧠</span><span>Analyzing with Claude AI…</span>
+    </div>`;
+  setTimeout(()=>{
+    document.getElementById('resume-feedback').innerHTML=`
+      <p><strong style="color:var(--bright)">📋 Summary:</strong> Your resume is well-structured with clear sections for education, projects, and skills.</p>
+      <br>
+      <p><strong style="color:var(--a2)">✅ Strengths detected:</strong> Strong technical skill listing (Python, SQL, TensorFlow). Good project descriptions with quantified outcomes. Clean formatting that parses well for ATS systems.</p>
+      <br>
+      <p><strong style="color:var(--warn)">⚠️ Missing keywords:</strong> "distributed systems", "MLOps", "data pipeline" — these appear in 80% of Data Scientist job descriptions but are absent from your resume.</p>
+      <br>
+      <p><strong style="color:var(--gold)">💡 Recommendation:</strong> Add a "Data Engineering" section highlighting any ETL or pipeline work. Consider adding a GitHub link prominently — recruiters in your target domain check it 73% of the time.</p>`;
+  },2200);
+}
+
+function clearResume(){
+  document.getElementById('resume-section').style.display='block';
+  document.getElementById('resume-result').style.display='none';
+  document.getElementById('resume-input').value='';
+}
+
+/* ══ MODAL ══ */
+function openModal(name){document.getElementById('modal-'+name).classList.add('open')}
+function closeModal(name){document.getElementById('modal-'+name).classList.remove('open')}
+document.querySelectorAll('.modal-ov').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')});
+});
+
+/* ══ TOAST ══ */
+function showToast(type,title,msg){
+  const ic={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};
+  document.getElementById('ti').textContent=ic[type]||'✅';
+  document.getElementById('tt').textContent=title;
+  document.getElementById('tm').textContent=msg;
+  const t=document.getElementById('toast');
+  t.classList.add('show');clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+/* ══ INIT ══ */
+renderSkillBars();
+renderActivityChart();
+renderStreak();
+renderHistory();
+renderCerts();
+renderCareers();
+</script>
+</body>
+</html>
